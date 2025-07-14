@@ -38,7 +38,7 @@
         android:textSize="16sp" />
 
 
-    <com.google.android.material.button.MaterialButton
+    <ImageButton
         android:id="@+id/itemButton"
         android:layout_width="59dp"
         android:layout_height="wrap_content"

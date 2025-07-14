@@ -24,9 +24,9 @@ class DashboardFragment : Fragment() {
         _binding = FragmentDashboardBinding.inflate(inflater, container, false)
 
         val items = listOf(
-            Item("Kurtka MERIDA", "189,99 zł"),//, R.drawable.kurtka1),
-            Item("Bluza LUX", "119,99 zł"),// R.drawable.kurtka1),
-            Item("Sneakersy ROKA", "229,99 zł")// R.drawable.kurtka1)
+            Item("Kurtka MERIDA", "189,99 zł", R.drawable.kurtka1),
+            Item("Bluza LUX", "119,99 zł", R.drawable.kurtka1),
+            Item("Sneakersy ROKA", "229,99 zł", R.drawable.kurtka1)
         )
 
         binding.recyclerView.layoutManager =
