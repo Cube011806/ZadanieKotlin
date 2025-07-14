@@ -7,7 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.GridLayoutManager
 import com.kk.zadaniekotlin.R
 import com.kk.zadaniekotlin.databinding.FragmentDashboardBinding
 
@@ -26,11 +26,13 @@ class DashboardFragment : Fragment() {
         val items = listOf(
             Item("Kurtka MERIDA", "189,99 zł", R.drawable.kurtka1),
             Item("Bluza LUX", "119,99 zł", R.drawable.kurtka1),
-            Item("Sneakersy ROKA", "229,99 zł", R.drawable.kurtka1)
+            Item("Sneakersy ROKA", "229,99 zł", R.drawable.kurtka1),
+            Item("Płaszcz RINO", "319,99 zł", R.drawable.kurtka1)
         )
 
         binding.recyclerView.layoutManager =
-            LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
+            GridLayoutManager(requireContext(), 2)
+
         binding.recyclerView.adapter = ItemAdapter(items)
 
         return binding.root
