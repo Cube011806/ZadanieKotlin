@@ -1,20 +1,19 @@
 package com.kk.zadaniekotlin.ui.dashboard
 
+import Item
+import ItemAdapter
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.kk.zadaniekotlin.R
 import com.kk.zadaniekotlin.databinding.FragmentDashboardBinding
 
 class DashboardFragment : Fragment() {
 
     private var _binding: FragmentDashboardBinding? = null
-
-    // This property is only valid between onCreateView and
-    // onDestroyView.
     private val binding get() = _binding!!
 
     override fun onCreateView(
@@ -22,17 +21,19 @@ class DashboardFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        val dashboardViewModel =
-            ViewModelProvider(this).get(DashboardViewModel::class.java)
-
         _binding = FragmentDashboardBinding.inflate(inflater, container, false)
-        val root: View = binding.root
 
-        val textView: TextView = binding.textDashboard
-        dashboardViewModel.text.observe(viewLifecycleOwner) {
-            textView.text = it
-        }
-        return root
+        val items = listOf(
+            Item("Kurtka MERIDA", "189,99 zł"),//, R.drawable.kurtka1),
+            Item("Bluza LUX", "119,99 zł"),// R.drawable.kurtka1),
+            Item("Sneakersy ROKA", "229,99 zł")// R.drawable.kurtka1)
+        )
+
+        binding.recyclerView.layoutManager =
+            LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
+        binding.recyclerView.adapter = ItemAdapter(items)
+
+        return binding.root
     }
 
     override fun onDestroyView() {
