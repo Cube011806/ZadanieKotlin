@@ -29,11 +29,13 @@ class ItemAdapter(private val items: List<Item>) :
         holder.itemPrice.text = item.price
         //holder.itemImage.setImageResource(item.imageRes)
         holder.itemButton.setOnClickListener {
+            //holder.itemImage.setImageResource(R.drawable.checkmark_icon)
             Toast.makeText(
                 holder.itemView.context,
                 "Kliknięto: ${item.title}",
                 Toast.LENGTH_SHORT
             ).show()
+
         }
     }
 

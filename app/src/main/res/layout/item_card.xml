@@ -1,27 +1,30 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/itemContainer"
     android:layout_width="200dp"
     android:layout_height="300dp">
 
     <ImageView
         android:id="@+id/itemImage"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="30dp"
-        android:layout_centerHorizontal="true"
+        android:layout_width="match_parent"
+        android:layout_height="212dp"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginTop="0dp"
+        android:layout_marginEnd="0dp"
         android:src="@drawable/kurtka1" />
 
     <TextView
         android:id="@+id/itemTitle"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="27dp"
         android:layout_alignParentBottom="true"
-        android:layout_marginBottom="70dp"
-        android:text="Kurtka MERIDA"
+        android:layout_marginBottom="57dp"
+        android:maxLines="1"
+        android:text="Kurtka damska MERIDA beżowa DStreet"
         android:textAlignment="center"
-        android:textSize="10sp"
         android:textColor="@color/black"
-        android:maxLines="1"/>
+        android:textSize="10sp" />
 
     <TextView
         android:id="@+id/itemPrice"
@@ -29,20 +32,23 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_marginStart="15dp"
-        android:layout_marginBottom="14dp"
+        android:layout_marginBottom="22dp"
+        android:gravity="center"
         android:text="189,99 zł"
-        android:textSize="16sp"
-        android:gravity="center" />
+        android:textSize="16sp" />
 
-    <Button
+
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/itemButton"
-        android:layout_width="68dp"
+        android:layout_width="59dp"
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
         android:layout_alignParentBottom="true"
-        android:layout_marginEnd="18dp"
-        android:layout_marginBottom="9dp"
-        android:text="Buy" />
+        android:layout_marginEnd="19dp"
+        android:layout_marginBottom="4dp"
+        app:icon="@drawable/add_shopping_cart_24"
+        app:iconGravity="textStart"
+        app:iconPadding="1dp" />
 
     <TextView
         android:id="@+id/itemDivider"
