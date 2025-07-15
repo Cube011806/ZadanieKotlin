@@ -32,12 +32,7 @@ class MainActivity : AppCompatActivity() {
         setupActionBarWithNavController(navController, appBarConfiguration)
 
         val toolbar = findViewById<Toolbar>(R.id.topBar)
-
-        //supportActionBar?.setDisplayHomeAsUpEnabled(false)
         supportActionBar?.setHomeAsUpIndicator(R.drawable.arrow_back_24px)
-
-
-        //setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
     }
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -52,7 +47,6 @@ class MainActivity : AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.action_login -> {
-
                 findNavController(R.id.nav_host_fragment_activity_main)
                     .navigate(R.id.navigation_home)
                 true

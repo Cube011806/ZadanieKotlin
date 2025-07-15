@@ -38,20 +38,22 @@
             android:layout_height="wrap_content"
             android:layout_below="@id/itemTitle"
             android:layout_alignParentStart="true"
-            android:layout_marginTop="2dp"
+            android:layout_marginStart="7dp"
+            android:layout_marginTop="19dp"
             android:text="189,99 zł"
             android:textColor="@android:color/black"
-            android:textSize="16sp" />
+            android:textSize="18sp" />
 
         <ImageButton
             android:id="@+id/itemButton"
             android:layout_width="34dp"
             android:layout_height="34dp"
-            android:layout_alignParentEnd="true"
             android:layout_below="@id/itemTitle"
-            android:layout_marginTop="4dp"
+            android:layout_alignParentEnd="true"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="-6dp"
             android:background="?attr/selectableItemBackgroundBorderless"
-            android:src="@drawable/add_shopping_cart_24"/>
+            android:src="@drawable/add_shopping_cart_24" />
 
     </RelativeLayout>
 </androidx.cardview.widget.CardView>
