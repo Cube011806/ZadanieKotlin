@@ -6,6 +6,8 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.animation.AnimationUtils
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
@@ -51,10 +53,54 @@ class HomeFragment : Fragment() {
                 .error(ColorDrawable(Color.RED))
                 .into(button)
         }
-        binding.imageButton1.setOnClickListener {
-            //findNavController().navigate(R.id.action_homeFragment)
-        }
+        val clickAnim = AnimationUtils.loadAnimation(requireContext(), R.anim.click_scale)
 
+
+
+        binding.imageButton1.setOnClickListener {
+            //it.startAnimation(clickAnim)
+            Toast.makeText(
+                root.context,
+                "Kliknięto: Kobiety", Toast.LENGTH_SHORT
+            ).show()
+            findNavController().navigate(R.id.navigation_category)
+        }
+        binding.imageButton2.setOnClickListener {
+            //it.startAnimation(clickAnim)
+            Toast.makeText(
+                root.context,
+                "Kliknięto: Mężczyzna",
+                Toast.LENGTH_SHORT
+            ).show()
+            findNavController().navigate(R.id.navigation_category)
+        }
+        binding.imageButton3.setOnClickListener {
+            //it.startAnimation(clickAnim)
+            Toast.makeText(
+                root.context,
+                "Kliknięto: Niemowlak",
+                Toast.LENGTH_SHORT
+            ).show()
+            findNavController().navigate(R.id.navigation_category)
+        }
+        binding.imageButton4.setOnClickListener {
+            //it.startAnimation(clickAnim)
+            Toast.makeText(
+                root.context,
+                "Kliknięto: Dziewczynka",
+                Toast.LENGTH_SHORT
+            ).show()
+            findNavController().navigate(R.id.navigation_category)
+        }
+        binding.imageButton5.setOnClickListener() {
+            //it.startAnimation(clickAnim)
+            Toast.makeText(
+                root.context,
+                "Kliknięto: Chłopiec",
+                Toast.LENGTH_SHORT
+            ).show()
+            findNavController().navigate(R.id.navigation_category)
+        }
         return root
     }
 
