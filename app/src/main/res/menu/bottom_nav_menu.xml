@@ -12,7 +12,7 @@
         android:title="Katalog" />
 
     <item
-        android:id="@+id/navigation_notifications"
+        android:id="@+id/navigation_basket"
         android:icon="@drawable/shopping_cart"
         android:title="Koszyk" />
     <item

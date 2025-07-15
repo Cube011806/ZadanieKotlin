@@ -1,10 +1,10 @@
-package com.kk.zadaniekotlin.ui.notifications
+package com.kk.zadaniekotlin.ui.basket
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 
-class NotificationsViewModel : ViewModel() {
+class BasketViewModel : ViewModel() {
 
     private val _text = MutableLiveData<String>().apply {
         value = "This is notifications Fragment"
