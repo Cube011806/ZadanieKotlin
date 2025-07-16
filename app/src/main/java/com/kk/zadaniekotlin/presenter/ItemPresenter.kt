@@ -7,8 +7,8 @@ class ItemPresenter(
     private val view: ItemView,
     private val model: ItemModel
 ) {
-    fun loadItems() {
-        val items = model.getItems()
-        view.showItems(items)
-    }
+//    fun loadItems() {
+//        val items = model.getItems()
+//        view.showItems(items)
+//    }
 }

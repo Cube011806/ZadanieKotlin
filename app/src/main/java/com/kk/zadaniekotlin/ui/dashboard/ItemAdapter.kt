@@ -12,6 +12,10 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.request.RequestListener
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
 import com.kk.zadaniekotlin.R
 import com.kk.zadaniekotlin.model.Item
 
@@ -50,6 +54,8 @@ class ItemAdapter(private val items: List<Item>) :
             ).show()*/
 
         }
+
+
     }
 
     override fun getItemCount(): Int = items.size
