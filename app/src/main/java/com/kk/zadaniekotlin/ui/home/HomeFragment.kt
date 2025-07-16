@@ -12,8 +12,12 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
+import com.google.firebase.Firebase
+import com.google.firebase.FirebaseApp
+import com.google.firebase.database.database
 import com.kk.zadaniekotlin.databinding.FragmentHomeBinding
 import com.kk.zadaniekotlin.R
+
 class HomeFragment : Fragment() {
 
     private var _binding: FragmentHomeBinding? = null
@@ -37,6 +41,9 @@ class HomeFragment : Fragment() {
             "https://static.kappahl.com/cdn-cgi/image/width=768,format=auto/globalassets/productimages/464230_f.jpg?ref=F89B866770",
             "https://mokida.com/media/catalog/product/W/M/WM4143305POB_001_01_5fbc.jpg?store=default&image-type=small_image&auto=webp&format=pjpg&width=538&height=806&fit=cover"
         )
+        if (FirebaseApp.getApps(requireContext()).isEmpty()) {
+            FirebaseApp.initializeApp(requireContext())
+        }
 
         val buttons = listOf(
             binding.imageButton1,
@@ -76,12 +83,18 @@ class HomeFragment : Fragment() {
         }
         binding.imageButton3.setOnClickListener {
             //it.startAnimation(clickAnim)
+            /*
             Toast.makeText(
                 root.context,
                 "Kliknięto: Niemowlak",
                 Toast.LENGTH_SHORT
             ).show()
-            findNavController().navigate(R.id.navigation_category)
+            findNavController().navigate(R.id.navigation_category)*/
+            // Write a message to the database
+            val database = Firebase.database
+            val myRef = database.getReference("message")
+
+            myRef.setValue("Hello, World!")
         }
         binding.imageButton4.setOnClickListener {
             //it.startAnimation(clickAnim)
