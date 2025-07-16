@@ -9,7 +9,19 @@
         android:id="@+id/navigation_home"
         android:name="com.kk.zadaniekotlin.ui.home.HomeFragment"
         android:label="ClothesShop"
-        tools:layout="@layout/fragment_home" />
+        tools:layout="@layout/fragment_home">
+
+        <action
+            android:id="@+id/action_navigation_home_to_navigation_category"
+            app:destination="@id/navigation_category">
+            <argument
+                android:name="categoryId"
+                app:argType="integer" />
+        </action>
+    </fragment>
+
+
+
 
     <fragment
         android:id="@+id/navigation_dashboard"
@@ -26,5 +38,11 @@
         android:id="@+id/navigation_category"
         android:name="com.kk.zadaniekotlin.ui.categories.CategoryFragment"
         android:label="ClothesShop"
-        tools:layout="@layout/fragment_category" />
+        tools:layout="@layout/fragment_category" >
+        <argument
+            android:name="categoryId"
+            app:argType="integer"
+            android:defaultValue="0" />
+    </fragment>
+
 </navigation>

@@ -9,6 +9,7 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.GridLayoutManager
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import com.kk.zadaniekotlin.databinding.FragmentCategoryBinding
@@ -25,6 +26,7 @@ class CategoryFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+
     }
 
     override fun onCreateView(
@@ -35,32 +37,35 @@ class CategoryFragment : Fragment() {
         _binding = FragmentCategoryBinding.inflate(inflater, container, false)
 
         adapter = CategoryAdapter(categoryList)
-        binding.recyclerView2.layoutManager = GridLayoutManager(requireContext(), 2)
+        val args = CategoryFragmentArgs.fromBundle(requireArguments())
+        val categoryId = args.categoryId
+        binding.recyclerView2.layoutManager = GridLayoutManager(requireContext(), 3)
         binding.recyclerView2.adapter = adapter
         binding.button.setOnClickListener {
+            /*
             val database = FirebaseDatabase.getInstance()
-            val categoryRef = database.getReference("FemCategories")
+            val categoryRef = database.getReference("BabyCategories")
 
             val categoryList = listOf(
                 Category(
                     title = "odzież wierzchnia",
-                    imageUrl = "https://img.kwcdn.com/product/fancy/55be9495-38b4-467a-8087-6ea4d4af55fd.jpg?imageMogr2/auto-orient%7CimageView2/2/w/800/q/70/format/webp"
+                    imageUrl = "https://fazymazy.com/userdata/public/assets/fotki%20do%20BLOGA/ubrania%20dla%20niemowl%C4%85t%20ch%C5%82opc%C3%B3w.png"
                 ),
                 Category(
-                    title = "odzież sportowa",
-                    imageUrl = "https://m.media-amazon.com/images/I/613HQTj3j8L._UF1000,1000_QL80_.jpg"
+                    title = "odzież elegancka",
+                    imageUrl = "https://www.lilen.store/wp-content/uploads/2023/10/komplet-na-chrzest-dla-chlopca-lilen-scaled.jpg"
                 ),
                 Category(
                     title = "swetry, swetry rozpinane",
-                    imageUrl = "https://m.media-amazon.com/images/I/51T+kGq4LOL._SY1000_.jpg"
+                    imageUrl = "https://gfx.51015kids.pl/pub/products/680/24680/900x1327/pdp-6c4701_6d470b.jpg"
                 ),
                 Category(
                     title = "jeansy, spodnie, szorty",
-                    imageUrl = "https://cp.bigstar.pl/files/sc_staging_images/product/normal_img_600392.webp"
+                    imageUrl = "https://i.etsystatic.com/7818429/r/il/3d809f/2237004274/il_570xN.2237004274_jwsd.jpg"
                 ),
                 Category(
-                    title = "sukienki, spódnice",
-                    imageUrl = "https://sarex-moda.pl/hpeciai/bc5e86c9d304ccfd22488f912fbedcc7/pol_pl_Sukienka-Victoria-czarna-74_1.jpg"
+                    title = "Placeholder",
+                    imageUrl = "Test test"
                 )
             )
 
@@ -71,17 +76,25 @@ class CategoryFragment : Fragment() {
                 }
             }
 
-            Log.d("Firebase", "Wstawiono ${categoryList.size} kategorii do bazy 🔥")
+            Log.d("Firebase", "Wstawiono ${categoryList.size} kategorii do bazy")*/
         }
 
-        loadCategoriesFromFirebase()
+        loadCategoriesFromFirebase(categoryId)
 
         return binding.root
     }
 
-    private fun loadCategoriesFromFirebase() {
+    private fun loadCategoriesFromFirebase(categoryId: Int) {
         val database = FirebaseDatabase.getInstance()
-        val categoryRef = database.getReference("categories")
+        var categoryRef: DatabaseReference
+        when (categoryId) {
+            1 -> categoryRef = database.getReference("FemCategories")
+            2 -> categoryRef = database.getReference("MaleCategories")
+            3 -> categoryRef = database.getReference("BabyCategories")
+            4 -> categoryRef = database.getReference("GirlCategories")
+            5 -> categoryRef = database.getReference("BoyCategories")
+            else -> categoryRef = database.getReference("categories")
+        }
 
         categoryRef.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {

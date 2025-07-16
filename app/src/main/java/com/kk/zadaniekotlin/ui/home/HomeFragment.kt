@@ -43,48 +43,53 @@ class HomeFragment : Fragment() {
         val root: View = binding.root
         loadImageUrls()
         binding.imageButton1.setOnClickListener {
+            val action = HomeFragmentDirections.actionNavigationHomeToNavigationCategory(1)
             //it.startAnimation(clickAnim)
             Toast.makeText(
                 root.context,
                 "Kliknięto: Kobiety", Toast.LENGTH_SHORT
             ).show()
-            findNavController().navigate(R.id.navigation_category)
+            findNavController().navigate(action)
         }
         binding.imageButton2.setOnClickListener {
             //it.startAnimation(clickAnim)
+            val action = HomeFragmentDirections.actionNavigationHomeToNavigationCategory(2)
             Toast.makeText(
                 root.context,
                 "Kliknięto: Mężczyzna",
                 Toast.LENGTH_SHORT
             ).show()
-            findNavController().navigate(R.id.navigation_category)
+            findNavController().navigate(action)
         }
         binding.imageButton3.setOnClickListener {
+            val action = HomeFragmentDirections.actionNavigationHomeToNavigationCategory(3)
             //it.startAnimation(clickAnim)
             Toast.makeText(
                 root.context,
                 "Kliknięto: Niemowlak",
                 Toast.LENGTH_SHORT
             ).show()
-            findNavController().navigate(R.id.navigation_category)
+            findNavController().navigate(action)
         }
         binding.imageButton4.setOnClickListener {
+            val action = HomeFragmentDirections.actionNavigationHomeToNavigationCategory(4)
             //it.startAnimation(clickAnim)
             Toast.makeText(
                 root.context,
                 "Kliknięto: Dziewczynka",
                 Toast.LENGTH_SHORT
             ).show()
-            findNavController().navigate(R.id.navigation_category)
+            findNavController().navigate(action)
         }
         binding.imageButton5.setOnClickListener() {
+            val action = HomeFragmentDirections.actionNavigationHomeToNavigationCategory(5)
             //it.startAnimation(clickAnim)
             Toast.makeText(
                 root.context,
                 "Kliknięto: Chłopiec",
                 Toast.LENGTH_SHORT
             ).show()
-            findNavController().navigate(R.id.navigation_category)
+            findNavController().navigate(action)
         }
         return root
     }
