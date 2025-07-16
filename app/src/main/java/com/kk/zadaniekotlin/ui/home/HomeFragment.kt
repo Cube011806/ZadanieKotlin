@@ -3,6 +3,7 @@ package com.kk.zadaniekotlin.ui.home
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -14,12 +15,18 @@ import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import com.google.firebase.Firebase
 import com.google.firebase.FirebaseApp
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.database
 import com.kk.zadaniekotlin.databinding.FragmentHomeBinding
 import com.kk.zadaniekotlin.R
+import com.kk.zadaniekotlin.model.ItemModelImpl
 
 class HomeFragment : Fragment() {
-
+    val database = FirebaseDatabase.getInstance()
+    val urlRef = database.getReference("imageUrls")
     private var _binding: FragmentHomeBinding? = null
 
     private val binding get() = _binding!!
@@ -34,36 +41,7 @@ class HomeFragment : Fragment() {
 
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
         val root: View = binding.root
-        val urls = listOf(
-            "https://img.freepik.com/darmowe-zdjecie/widok-z-boku-usmiechnietej-kobiety-kawie-w-lozku_23-2148832943.jpg?semt=ais_hybrid&w=740",
-            "https://patryktarachon.pl/wp-content/uploads/2020/01/Sklep-Ozonee-ubrania-dla-m%C4%99%C5%BCczyzn-Patryk-Taracho%C5%84-2020-scaled.jpg",
-            "https://rownowazni.trefl.com/wp-content/uploads/2022/09/Projekt-bez-tytulu-75-600x600.jpg",
-            "https://static.kappahl.com/cdn-cgi/image/width=768,format=auto/globalassets/productimages/464230_f.jpg?ref=F89B866770",
-            "https://mokida.com/media/catalog/product/W/M/WM4143305POB_001_01_5fbc.jpg?store=default&image-type=small_image&auto=webp&format=pjpg&width=538&height=806&fit=cover"
-        )
-        if (FirebaseApp.getApps(requireContext()).isEmpty()) {
-            FirebaseApp.initializeApp(requireContext())
-        }
-
-        val buttons = listOf(
-            binding.imageButton1,
-            binding.imageButton2,
-            binding.imageButton3,
-            binding.imageButton4,
-            binding.imageButton5
-        )
-
-        urls.zip(buttons).forEach { (url, button) ->
-            Glide.with(requireContext())
-                .load(url)
-                .placeholder(ColorDrawable(Color.WHITE))
-                .error(ColorDrawable(Color.RED))
-                .into(button)
-        }
-        val clickAnim = AnimationUtils.loadAnimation(requireContext(), R.anim.click_scale)
-
-
-
+        loadImageUrls()
         binding.imageButton1.setOnClickListener {
             //it.startAnimation(clickAnim)
             Toast.makeText(
@@ -83,18 +61,12 @@ class HomeFragment : Fragment() {
         }
         binding.imageButton3.setOnClickListener {
             //it.startAnimation(clickAnim)
-            /*
             Toast.makeText(
                 root.context,
                 "Kliknięto: Niemowlak",
                 Toast.LENGTH_SHORT
             ).show()
-            findNavController().navigate(R.id.navigation_category)*/
-            // Write a message to the database
-            val database = Firebase.database
-            val myRef = database.getReference("message")
-
-            myRef.setValue("Hello, World!")
+            findNavController().navigate(R.id.navigation_category)
         }
         binding.imageButton4.setOnClickListener {
             //it.startAnimation(clickAnim)
@@ -115,6 +87,40 @@ class HomeFragment : Fragment() {
             findNavController().navigate(R.id.navigation_category)
         }
         return root
+    }
+    fun loadImageUrls() {
+        val database = FirebaseDatabase.getInstance()
+        val urlRef = database.getReference("imageUrls")
+
+        urlRef.addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                val urlList = mutableListOf<String>()
+                for (child in snapshot.children) {
+                    val url = child.getValue(String::class.java)
+                    url?.let { urlList.add(it) }
+                }
+
+                val buttons = listOf(
+                    binding.imageButton1,
+                    binding.imageButton2,
+                    binding.imageButton3,
+                    binding.imageButton4,
+                    binding.imageButton5
+                )
+
+                urlList.zip(buttons).forEach { (url, button) ->
+                    Glide.with(requireContext())
+                        .load(url)
+                        .placeholder(ColorDrawable(Color.WHITE))
+                        .error(ColorDrawable(Color.RED))
+                        .into(button)
+                }
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                Log.e("Firebase", "Błąd ładowania URL-i: ${error.message}")
+            }
+        })
     }
 
 
