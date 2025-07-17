@@ -38,6 +38,8 @@ class DashboardFragment : Fragment(), ItemView {
         binding.recyclerView.layoutManager = GridLayoutManager(requireContext(), 2)
         val itemList = mutableListOf<Item>()
         adapter = ItemAdapter(itemList)
+        val args = DashboardFragmentArgs.fromBundle(requireArguments())
+        val categoryId = args.categoryId
         binding.recyclerView.adapter = adapter
         loadItemsFromFirebase(adapter, itemList)
 

@@ -27,7 +27,12 @@
         android:id="@+id/navigation_dashboard"
         android:name="com.kk.zadaniekotlin.ui.dashboard.DashboardFragment"
         android:label="ClothesShop"
-        tools:layout="@layout/fragment_dashboard" />
+        tools:layout="@layout/fragment_dashboard">
+        <argument
+            android:name="categoryId"
+            app:argType="integer"
+            android:defaultValue="100" />
+    </fragment>
 
     <fragment
         android:id="@+id/navigation_basket"
@@ -39,6 +44,14 @@
         android:name="com.kk.zadaniekotlin.ui.categories.CategoryFragment"
         android:label="ClothesShop"
         tools:layout="@layout/fragment_category" >
+        <action
+            android:id="@+id/action_categoryFragment_to_dashboardFragment"
+            app:destination="@id/navigation_dashboard">
+            <argument
+                android:name="categoryId"
+                app:argType="integer" />
+        </action>
+
         <argument
             android:name="categoryId"
             app:argType="integer"
