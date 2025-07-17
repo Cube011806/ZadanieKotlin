@@ -28,28 +28,4 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-<!--    <Spinner-->
-<!--        android:id="@+id/categorySpinner"-->
-<!--        android:layout_width="fill_parent"-->
-<!--        android:layout_height="36dp"-->
-<!--        android:layout_marginStart="44dp"-->
-<!--        android:layout_marginTop="16dp"-->
-<!--        app:layout_constraintStart_toStartOf="parent"-->
-<!--        app:layout_constraintTop_toTopOf="parent" />-->
-    <com.google.android.material.textfield.TextInputLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_constraintStart_toStartOf="parent">
-
-    </com.google.android.material.textfield.TextInputLayout>
-
-    <AutoCompleteTextView
-        android:id="@+id/categoryDropdown"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Wybierz kategorię"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,6 +1,7 @@
 package com.kk.zadaniekotlin.ui.categories
 
 import android.R
+import android.app.AlertDialog
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -45,43 +46,62 @@ class CategoryFragment : Fragment() {
         var categoryId = args.categoryId
         binding.recyclerView2.layoutManager = GridLayoutManager(requireContext(), 3)
         binding.recyclerView2.adapter = adapter
-        val categories = listOf(
-            "Kobiety",
-            "Mężczyźni",
-            "Niemowlak",
-            "Dziewczynka",
-            "Chłopiec",
-            "Wszystkie"
-        )
-        val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_list_item_1, categories)
-        binding.categoryDropdown.setAdapter(adapter)
+
 
         binding.button.setOnClickListener {
-            binding.categoryDropdown.showDropDown()
+            val categories = listOf("Kobiety", "Mężczyźni", "Niemowlak", "Dziewczynka", "Chłopiec","Wszystkie")
+            val categoryMap = mapOf(
+                "Kobiety" to 1,
+                "Mężczyźni" to 2,
+                "Niemowlak" to 3,
+                "Dziewczynka" to 4,
+                "Chłopiec" to 5,
+                "Wszystkie" to 6
+            )
 
+            var currentSelection = "Kobiety"
 
-        }
+            binding.button.setOnClickListener {
+                val selectedIndex = categories.indexOf(currentSelection)
 
-        binding.categoryDropdown.setOnItemClickListener {
+                var tempSelection = selectedIndex
 
-                                                        parent, view, position, id ->
-            val selectedCategoryId = binding.categoryDropdown.text.toString()
-            if (selectedCategoryId.isNotEmpty()) {
-                when (selectedCategoryId) {
-                    "Kobiety" -> categoryId = 1
-                    "Mężczyźni" -> categoryId = 2
-                    "Niemowlak" -> categoryId = 3
-                    "Dziewczynka" -> categoryId = 4
-                    "Chłopiec" -> categoryId = 5
-                    "Wszystkie" -> categoryId = 6
-                }
+                AlertDialog.Builder(requireContext())
+                    .setTitle("Wybierz kategorię")
+                    .setSingleChoiceItems(categories.toTypedArray(), selectedIndex) { _, which ->
+                        tempSelection = which
+                    }
+                    .setPositiveButton("Zatwierdź") { _, _ ->
+                        val selectedName = categories[tempSelection]
+                        currentSelection = selectedName
 
-            } else {
-                Toast.makeText(requireContext(), "Wybierz kategorię!", Toast.LENGTH_SHORT).show()
+                        val categoryId = categoryMap[selectedName] ?: return@setPositiveButton
+                        loadCategoriesFromFirebase(categoryId)
+                    }
+                    .show()
             }
-//            val selectedCategory = parent.getItemAtPosition(position).toString()
-            loadCategoriesFromFirebase(categoryId)
+
         }
+
+//        binding.categoryDropdown.setOnItemClickListener {
+//            parent, view, position, id ->
+//            val selectedCategoryId = binding.categoryDropdown.text.toString()
+//            if (selectedCategoryId.isNotEmpty()) {
+//                when (selectedCategoryId) {
+//                    "Kobiety" -> categoryId = 1
+//                    "Mężczyźni" -> categoryId = 2
+//                    "Niemowlak" -> categoryId = 3
+//                    "Dziewczynka" -> categoryId = 4
+//                    "Chłopiec" -> categoryId = 5
+//                    "Wszystkie" -> categoryId = 6
+//                }
+//
+//            } else {
+//                Toast.makeText(requireContext(), "Wybierz kategorię!", Toast.LENGTH_SHORT).show()
+//            }
+//            val selectedCategory = parent.getItemAtPosition(position).toString()
+//            loadCategoriesFromFirebase(categoryId)
+//        }
 
             //updateRecyclerViewWithCategory(selectedCategory)
 //        }
