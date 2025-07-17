@@ -1,15 +1,11 @@
 package com.kk.zadaniekotlin.ui.categories
 
-import android.R
 import android.app.AlertDialog
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ArrayAdapter
-import android.widget.Toast
-import androidx.core.view.forEach
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.GridLayoutManager
 import com.google.firebase.database.DataSnapshot
@@ -24,14 +20,11 @@ class CategoryFragment : Fragment() {
 
     private var _binding: FragmentCategoryBinding? = null
     private val binding get() = _binding!!
-
     private val categoryList = mutableListOf<Category>()
     private lateinit var adapter: CategoryAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-
     }
 
     override fun onCreateView(
@@ -40,16 +33,23 @@ class CategoryFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentCategoryBinding.inflate(inflater, container, false)
-
         adapter = CategoryAdapter(categoryList)
         val args = CategoryFragmentArgs.fromBundle(requireArguments())
         var categoryId = args.categoryId
         binding.recyclerView2.layoutManager = GridLayoutManager(requireContext(), 3)
         binding.recyclerView2.adapter = adapter
 
+      val categoryIdToName = mapOf(
+            1 to "Kobiety",
+            2 to "Mężczyźni",
+            3 to "Niemowlak",
+            4 to "Dziewczynka",
+            5 to "Chłopiec",
+            6 to "Wszystkie"
+        )
 
+        var currentSelection = categoryIdToName[categoryId] ?: "Wszystkie"
         binding.button.setOnClickListener {
-            val categories = listOf("Kobiety", "Mężczyźni", "Niemowlak", "Dziewczynka", "Chłopiec","Wszystkie")
             val categoryMap = mapOf(
                 "Kobiety" to 1,
                 "Mężczyźni" to 2,
@@ -58,14 +58,9 @@ class CategoryFragment : Fragment() {
                 "Chłopiec" to 5,
                 "Wszystkie" to 6
             )
-
-            var currentSelection = "Kobiety"
-
-            binding.button.setOnClickListener {
+            val categories = listOf("Kobiety", "Mężczyźni", "Niemowlak", "Dziewczynka", "Chłopiec", "Wszystkie")
                 val selectedIndex = categories.indexOf(currentSelection)
-
                 var tempSelection = selectedIndex
-
                 AlertDialog.Builder(requireContext())
                     .setTitle("Wybierz kategorię")
                     .setSingleChoiceItems(categories.toTypedArray(), selectedIndex) { _, which ->
@@ -80,13 +75,9 @@ class CategoryFragment : Fragment() {
                     }
                     .show()
             }
-
-        }
-
             /*
             val database = FirebaseDatabase.getInstance()
             val categoryRef = database.getReference("BabyCategories")
-
             val categoryList = listOf(
                 Category(
                     title = "odzież wierzchnia",
@@ -109,19 +100,16 @@ class CategoryFragment : Fragment() {
                     imageUrl = "Test test"
                 )
             )
-
             categoryList.forEach { category ->
                 val key = categoryRef.push().key
                 key?.let {
                     categoryRef.child(it).setValue(category)
                 }
             }
-
             Log.d("Firebase", "Wstawiono ${categoryList.size} kategorii do bazy")*/
         //}
 
         loadCategoriesFromFirebase(categoryId)
-
         return binding.root
     }
 
