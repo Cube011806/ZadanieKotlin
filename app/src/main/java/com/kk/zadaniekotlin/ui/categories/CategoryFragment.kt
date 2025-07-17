@@ -83,34 +83,6 @@ class CategoryFragment : Fragment() {
 
         }
 
-//        binding.categoryDropdown.setOnItemClickListener {
-//            parent, view, position, id ->
-//            val selectedCategoryId = binding.categoryDropdown.text.toString()
-//            if (selectedCategoryId.isNotEmpty()) {
-//                when (selectedCategoryId) {
-//                    "Kobiety" -> categoryId = 1
-//                    "Mężczyźni" -> categoryId = 2
-//                    "Niemowlak" -> categoryId = 3
-//                    "Dziewczynka" -> categoryId = 4
-//                    "Chłopiec" -> categoryId = 5
-//                    "Wszystkie" -> categoryId = 6
-//                }
-//
-//            } else {
-//                Toast.makeText(requireContext(), "Wybierz kategorię!", Toast.LENGTH_SHORT).show()
-//            }
-//            val selectedCategory = parent.getItemAtPosition(position).toString()
-//            loadCategoriesFromFirebase(categoryId)
-//        }
-
-            //updateRecyclerViewWithCategory(selectedCategory)
-//        }
-        //binding.button.setOnClickListener {
-            //binding.categoryDropdown.showDropDown()
-
-
-
-
             /*
             val database = FirebaseDatabase.getInstance()
             val categoryRef = database.getReference("BabyCategories")
