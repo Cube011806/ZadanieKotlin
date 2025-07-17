@@ -44,6 +44,11 @@ class CategoryAdapter(private val categories: List<Category>) :
         }
 
     }
+    fun updateData(newCategories: List<Category>) {
+        (categories as MutableList).clear()
+        (categories as MutableList).addAll(newCategories)
+        notifyDataSetChanged()
+    }
 
     override fun getItemCount(): Int = categories.size
 }

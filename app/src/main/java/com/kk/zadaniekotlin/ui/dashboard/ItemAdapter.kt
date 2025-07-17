@@ -56,7 +56,12 @@ class ItemAdapter(private val items: List<Item>) :
         }
 
 
-    }
 
+    }
+    fun updateData(newItems: List<Item>) {
+        (items as MutableList).clear()
+        (items as MutableList).addAll(newItems)
+        notifyDataSetChanged()
+    }
     override fun getItemCount(): Int = items.size
 }

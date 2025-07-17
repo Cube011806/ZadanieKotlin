@@ -29,9 +29,9 @@
         android:label="ClothesShop"
         tools:layout="@layout/fragment_dashboard">
         <argument
-            android:name="categoryId"
+            android:name="catId"
             app:argType="integer"
-            android:defaultValue="100" />
+            android:defaultValue="0" />
     </fragment>
 
     <fragment
