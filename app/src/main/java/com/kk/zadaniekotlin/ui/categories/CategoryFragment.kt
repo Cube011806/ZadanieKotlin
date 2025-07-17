@@ -108,7 +108,7 @@ class CategoryFragment : Fragment() {
             }
             Log.d("Firebase", "Wstawiono ${categoryList.size} kategorii do bazy")*/
         //}
-
+        binding.recyclerView2
         loadCategoriesFromFirebase(categoryId)
         return binding.root
     }
