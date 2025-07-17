@@ -1,10 +1,14 @@
 package com.kk.zadaniekotlin.ui.categories
 
+import android.R
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ArrayAdapter
+import android.widget.Toast
+import androidx.core.view.forEach
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.GridLayoutManager
 import com.google.firebase.database.DataSnapshot
@@ -38,10 +42,55 @@ class CategoryFragment : Fragment() {
 
         adapter = CategoryAdapter(categoryList)
         val args = CategoryFragmentArgs.fromBundle(requireArguments())
-        val categoryId = args.categoryId
+        var categoryId = args.categoryId
         binding.recyclerView2.layoutManager = GridLayoutManager(requireContext(), 3)
         binding.recyclerView2.adapter = adapter
+        val categories = listOf(
+            "Kobiety",
+            "Mężczyźni",
+            "Niemowlak",
+            "Dziewczynka",
+            "Chłopiec",
+            "Wszystkie"
+        )
+        val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_list_item_1, categories)
+        binding.categoryDropdown.setAdapter(adapter)
+
         binding.button.setOnClickListener {
+            binding.categoryDropdown.showDropDown()
+
+
+        }
+
+        binding.categoryDropdown.setOnItemClickListener {
+
+                                                        parent, view, position, id ->
+            val selectedCategoryId = binding.categoryDropdown.text.toString()
+            if (selectedCategoryId.isNotEmpty()) {
+                when (selectedCategoryId) {
+                    "Kobiety" -> categoryId = 1
+                    "Mężczyźni" -> categoryId = 2
+                    "Niemowlak" -> categoryId = 3
+                    "Dziewczynka" -> categoryId = 4
+                    "Chłopiec" -> categoryId = 5
+                    "Wszystkie" -> categoryId = 6
+                }
+
+            } else {
+                Toast.makeText(requireContext(), "Wybierz kategorię!", Toast.LENGTH_SHORT).show()
+            }
+//            val selectedCategory = parent.getItemAtPosition(position).toString()
+            loadCategoriesFromFirebase(categoryId)
+        }
+
+            //updateRecyclerViewWithCategory(selectedCategory)
+//        }
+        //binding.button.setOnClickListener {
+            //binding.categoryDropdown.showDropDown()
+
+
+
+
             /*
             val database = FirebaseDatabase.getInstance()
             val categoryRef = database.getReference("BabyCategories")
@@ -77,7 +126,7 @@ class CategoryFragment : Fragment() {
             }
 
             Log.d("Firebase", "Wstawiono ${categoryList.size} kategorii do bazy")*/
-        }
+        //}
 
         loadCategoriesFromFirebase(categoryId)
 
