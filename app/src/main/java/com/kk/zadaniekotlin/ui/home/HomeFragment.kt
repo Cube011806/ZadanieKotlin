@@ -10,19 +10,29 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.lifecycle.ViewModelProvider
+import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import com.kk.zadaniekotlin.HomeViewModel
 import com.kk.zadaniekotlin.databinding.FragmentHomeBinding
-
+import com.kk.zadaniekotlin.ui.home.HomeUiState
 
 class HomeFragment : Fragment() {
     private var _binding: FragmentHomeBinding? = null
     private val binding get() = _binding!!
 
-    private lateinit var homeViewModel: HomeViewModel
+    private val homeViewModel: HomeViewModel by viewModels()
     private val sharedViewModel: SharedViewModel by activityViewModels()
+
+    private val buttons by lazy {
+        listOf(
+            binding.imageButton1,
+            binding.imageButton2,
+            binding.imageButton3,
+            binding.imageButton4,
+            binding.imageButton5
+        )
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -30,27 +40,37 @@ class HomeFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
-        val root = binding.root
+        return binding.root
+    }
 
-        homeViewModel = ViewModelProvider(this)[HomeViewModel::class.java]
-        val buttons = listOf(
-            binding.imageButton1,
-            binding.imageButton2,
-            binding.imageButton3,
-            binding.imageButton4,
-            binding.imageButton5
-        )
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
-        homeViewModel.imageUrls.observe(viewLifecycleOwner) { urlList ->
-            urlList.zip(buttons).forEach { (url, button) ->
-                Glide.with(requireContext())
-                    .load(url)
-                    .placeholder(ColorDrawable(Color.WHITE))
-                    .error(ColorDrawable(Color.RED))
-                    .into(button)
+        homeViewModel.uiState.observe(viewLifecycleOwner) { state ->
+            when (state) {
+                is HomeUiState.Loading -> {
+                    binding.progressBar.visibility = View.VISIBLE
+                }
+                is HomeUiState.Success -> {
+                    binding.progressBar.visibility = View.GONE
+                    state.imageUrls.zip(buttons).forEach { (url, button) ->
+                        Glide.with(requireContext())
+                            .load(url)
+                            .placeholder(ColorDrawable(Color.WHITE))
+                            .error(ColorDrawable(Color.RED))
+                            .into(button)
+                    }
+                }
+                is HomeUiState.Empty -> {
+                    binding.progressBar.visibility = View.GONE
+                    Toast.makeText(requireContext(), "Brak obrazów do wyświetlenia", Toast.LENGTH_SHORT).show()
+                }
+                is HomeUiState.Error -> {
+                    binding.progressBar.visibility = View.GONE
+                    Toast.makeText(requireContext(), "Błąd: ${state.message}", Toast.LENGTH_SHORT).show()
+                }
             }
         }
-
 
         val clickMap = mapOf(
             binding.imageButton1 to Pair(1, "Kobiety"),
@@ -67,10 +87,7 @@ class HomeFragment : Fragment() {
                 val action = HomeFragmentDirections.actionNavigationHomeToNavigationCategory(pair.first)
                 findNavController().navigate(action)
             }
-
         }
-
-        return root
     }
 
     override fun onDestroyView() {

@@ -9,6 +9,7 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
+import com.kk.zadaniekotlin.ui.home.HomeUiState
 
 class HomeViewModel(private val savedStateHandle: SavedStateHandle) : ViewModel() {
 
@@ -18,34 +19,26 @@ class HomeViewModel(private val savedStateHandle: SavedStateHandle) : ViewModel(
         private const val KEY_SELECTED_CATEGORY_NAME = "selectedCategoryName"
     }
 
-    private val _imageUrls = MutableLiveData<List<String>>()
-    val imageUrls: LiveData<List<String>> = _imageUrls
-
-    private val _loading = MutableLiveData<Boolean>()
-    val loading: LiveData<Boolean> = _loading
+    private val _uiState = MutableLiveData<HomeUiState>()
+    val uiState: LiveData<HomeUiState> get() = _uiState
 
     init {
         val cachedUrls = savedStateHandle.get<List<String>>(KEY_IMAGE_URLS)
         if (cachedUrls != null) {
-            _imageUrls.value = cachedUrls
+            _uiState.value = if (cachedUrls.isEmpty()) {
+                HomeUiState.Empty
+            } else {
+                HomeUiState.Success(cachedUrls)
+            }
         } else {
             loadImageUrls()
         }
     }
 
-    fun saveImageUrls(urls: List<String>) {
-        savedStateHandle[KEY_IMAGE_URLS] = urls
-        _imageUrls.value = urls
-    }
+    fun loadImageUrls() {
+        _uiState.value = HomeUiState.Loading
 
-    fun getSavedImageUrls(): List<String> {
-        return savedStateHandle[KEY_IMAGE_URLS] ?: emptyList()
-    }
-
-    private fun loadImageUrls() {
-        _loading.value = true
         val urlRef = FirebaseDatabase.getInstance().getReference("imageUrls")
-
         urlRef.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 val urls = mutableListOf<String>()
@@ -53,13 +46,19 @@ class HomeViewModel(private val savedStateHandle: SavedStateHandle) : ViewModel(
                     val url = child.getValue(String::class.java)
                     url?.let { urls.add(it) }
                 }
-                saveImageUrls(urls)
-                _loading.value = false
+
+                savedStateHandle[KEY_IMAGE_URLS] = urls
+
+                _uiState.value = if (urls.isEmpty()) {
+                    HomeUiState.Empty
+                } else {
+                    HomeUiState.Success(urls)
+                }
             }
 
             override fun onCancelled(error: DatabaseError) {
-                _loading.value = false
                 Log.e("Firebase", "Błąd: ${error.message}")
+                _uiState.value = HomeUiState.Error(error.message ?: "Błąd ładowania danych")
             }
         })
     }

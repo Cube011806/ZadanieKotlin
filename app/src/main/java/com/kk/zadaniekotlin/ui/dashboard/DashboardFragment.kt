@@ -33,23 +33,40 @@ class DashboardFragment : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-
         super.onViewCreated(view, savedInstanceState)
 
         adapter = ItemAdapter(mutableListOf())
         binding.recyclerView.layoutManager = GridLayoutManager(requireContext(), 2)
         binding.recyclerView.adapter = adapter
 
-        val catId = sharedViewModel.catId.value ?: return
-        val subCatId = sharedViewModel.subCatId.value ?: return
+        val catId = sharedViewModel.catId.value ?: 0
+        val subCatId = sharedViewModel.subCatId.value ?: 0
         viewModel.loadItems(catId, subCatId)
-        
 
-
-        viewModel.items.observe(viewLifecycleOwner) { itemList ->
-            adapter.updateData(itemList)
-            if (itemList.isEmpty()) {
-                Toast.makeText(requireContext(), "Brak produktów w tej kategorii", Toast.LENGTH_SHORT).show()
+        viewModel.uiState.observe(viewLifecycleOwner) { state ->
+            when (state) {
+                is DashboardUiState.Loading -> {
+                    binding.progressBar.visibility = View.VISIBLE
+                    binding.recyclerView.visibility = View.GONE
+                    binding.emptyTextView.visibility = View.GONE
+                }
+                is DashboardUiState.Success -> {
+                    binding.progressBar.visibility = View.GONE
+                    binding.recyclerView.visibility = View.VISIBLE
+                    binding.emptyTextView.visibility = View.GONE
+                    adapter.updateData(state.items)
+                }
+                is DashboardUiState.Empty -> {
+                    binding.progressBar.visibility = View.GONE
+                    binding.recyclerView.visibility = View.GONE
+                    binding.emptyTextView.visibility = View.VISIBLE
+                }
+                is DashboardUiState.Error -> {
+                    binding.progressBar.visibility = View.GONE
+                    binding.recyclerView.visibility = View.VISIBLE
+                    binding.emptyTextView.visibility = View.GONE
+                    Toast.makeText(requireContext(), "Błąd: ${state.exception.message}", Toast.LENGTH_SHORT).show()
+                }
             }
         }
     }

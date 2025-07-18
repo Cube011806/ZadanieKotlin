@@ -12,12 +12,16 @@ class CategoryViewModel(private val savedStateHandle: SavedStateHandle) : ViewMo
         private const val KEY_ID = "categoryId"
         private const val KEY_NAME = "categoryName"
     }
+    private val _uiState = MutableLiveData<CategoryUiState>()
+    val uiState: LiveData<CategoryUiState> get() = _uiState
 
     private val _categories = MutableLiveData<List<Category>>()
     val categories: LiveData<List<Category>> = _categories
 
     fun loadCategories(categoryId: Int) {
         savedStateHandle[KEY_ID] = categoryId
+        _uiState.value = CategoryUiState.Loading
+
         val ref: DatabaseReference = when (categoryId) {
             1 -> FirebaseDatabase.getInstance().getReference("FemCategories")
             2 -> FirebaseDatabase.getInstance().getReference("MaleCategories")
@@ -29,19 +33,21 @@ class CategoryViewModel(private val savedStateHandle: SavedStateHandle) : ViewMo
 
         ref.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
-                val result = mutableListOf<Category>()
-                for (child in snapshot.children) {
-                    val category = child.getValue(Category::class.java)
-                    category?.let { result.add(it) }
+                val result = snapshot.children.mapNotNull { it.getValue(Category::class.java) }
+
+                _uiState.value = if (result.isEmpty()) {
+                    CategoryUiState.Empty
+                } else {
+                    CategoryUiState.Success(result)
                 }
-                _categories.value = result
             }
 
             override fun onCancelled(error: DatabaseError) {
-                Log.e("CategoryViewModel", "Błąd ładowania kategorii: ${error.message}")
+                _uiState.value = CategoryUiState.Error(error.message ?: "Błąd ładowania kategorii")
             }
         })
     }
+
 
     fun getCurrentCategoryId(): Int = savedStateHandle[KEY_ID] ?: 6 //!!!!!!!!!!!
     fun getCurrentCategoryName(): String? = savedStateHandle[KEY_NAME]

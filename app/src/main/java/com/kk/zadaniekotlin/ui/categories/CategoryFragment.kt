@@ -63,8 +63,31 @@ class CategoryFragment : Fragment() {
             }
         }
 
-        viewModel.categories.observe(viewLifecycleOwner) { list ->
-            adapter.updateData(list)
+        viewModel.uiState.observe(viewLifecycleOwner) { state ->
+            when (state) {
+                is CategoryUiState.Loading -> {
+                    binding.progressBar.visibility = View.VISIBLE
+                    binding.recyclerView2.visibility = View.GONE
+                    binding.emptyTextView.visibility = View.GONE
+                }
+                is CategoryUiState.Success -> {
+                    binding.progressBar.visibility = View.GONE
+                    binding.recyclerView2.visibility = View.VISIBLE
+                    binding.emptyTextView.visibility = View.GONE
+                    adapter.updateData(state.categories)
+                }
+                is CategoryUiState.Empty -> {
+                    binding.progressBar.visibility = View.GONE
+                    binding.recyclerView2.visibility = View.GONE
+                    binding.emptyTextView.visibility = View.VISIBLE
+                }
+                is CategoryUiState.Error -> {
+                    binding.progressBar.visibility = View.GONE
+                    binding.recyclerView2.visibility = View.VISIBLE
+                    binding.emptyTextView.visibility = View.GONE
+                    Toast.makeText(requireContext(), "Błąd: ${state.message}", Toast.LENGTH_SHORT).show()
+                }
+            }
         }
 
         binding.button.setOnClickListener {
