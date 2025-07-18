@@ -1,6 +1,7 @@
 package com.kk.zadaniekotlin
 
 import SharedViewModel
+import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
@@ -65,8 +66,8 @@ class MainActivity : AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.action_login -> {
-                findNavController(R.id.nav_host_fragment_activity_main)
-                    .navigate(R.id.navigation_home)
+                val intent = Intent(this, LoginActivity::class.java)
+                startActivity(intent)
                 true
             }
             android.R.id.home -> {
