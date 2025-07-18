@@ -39,7 +39,7 @@ class CategoryAdapter(private val categories: List<Category>) :
         holder.itemView.setOnClickListener {
             val navController = findNavController(holder.itemView)
             val action = CategoryFragmentDirections
-                .actionCategoryFragmentToDashboardFragment(category.catId)
+                .actionCategoryFragmentToDashboardFragment(category.catId, category.subCatId)
             navController.navigate(action)
         }
 

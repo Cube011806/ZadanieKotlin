@@ -3,14 +3,13 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/mobile_navigation"
-    app:startDestination="@+id/navigation_home">
+    app:startDestination="@id/navigation_home">
 
     <fragment
         android:id="@+id/navigation_home"
         android:name="com.kk.zadaniekotlin.ui.home.HomeFragment"
         android:label="ClothesShop"
         tools:layout="@layout/fragment_home">
-
         <action
             android:id="@+id/action_navigation_home_to_navigation_category"
             app:destination="@id/navigation_category">
@@ -19,10 +18,6 @@
                 app:argType="integer" />
         </action>
     </fragment>
-
-
-
-
     <fragment
         android:id="@+id/navigation_dashboard"
         android:name="com.kk.zadaniekotlin.ui.dashboard.DashboardFragment"
@@ -31,7 +26,11 @@
         <argument
             android:name="catId"
             app:argType="integer"
-            android:defaultValue="0" />
+            android:defaultValue="1" />
+        <argument
+            android:name="subCatId"
+            app:argType="integer"
+            android:defaultValue="1" />
     </fragment>
 
     <fragment
@@ -39,23 +38,25 @@
         android:name="com.kk.zadaniekotlin.ui.basket.BasketFragment"
         android:label="ClothesShop"
         tools:layout="@layout/fragment_basket" />
+
     <fragment
         android:id="@+id/navigation_category"
         android:name="com.kk.zadaniekotlin.ui.categories.CategoryFragment"
         android:label="ClothesShop"
-        tools:layout="@layout/fragment_category" >
+        tools:layout="@layout/fragment_category">
         <action
             android:id="@+id/action_categoryFragment_to_dashboardFragment"
             app:destination="@id/navigation_dashboard">
             <argument
                 android:name="categoryId"
                 app:argType="integer" />
+            <argument
+                android:name="subCatId"
+                app:argType="integer" />
         </action>
-
         <argument
             android:name="categoryId"
             app:argType="integer"
             android:defaultValue="0" />
     </fragment>
-
 </navigation>

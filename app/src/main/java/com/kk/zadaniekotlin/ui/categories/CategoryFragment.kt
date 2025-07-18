@@ -1,11 +1,13 @@
 package com.kk.zadaniekotlin.ui.categories
 
+import SharedViewModel
 import android.app.AlertDialog
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.GridLayoutManager
 import com.kk.zadaniekotlin.databinding.FragmentCategoryBinding
@@ -16,6 +18,7 @@ class CategoryFragment : Fragment() {
     private val binding get() = _binding!!
 
     private val viewModel: CategoryViewModel by viewModels()
+    private val sharedViewModel: SharedViewModel by activityViewModels()
     private lateinit var adapter: CategoryAdapter
 
     private val categoryIdToName = mapOf(
@@ -24,7 +27,7 @@ class CategoryFragment : Fragment() {
         3 to "Niemowlak",
         4 to "Dziewczynka",
         5 to "Chłopiec",
-        6 to "Wszystkie"
+        0 to "Wszystkie"
     )
     private val categoryNameToId = categoryIdToName.entries.associate { (id, name) -> name to id }
 

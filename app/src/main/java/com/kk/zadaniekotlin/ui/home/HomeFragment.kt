@@ -20,6 +20,7 @@ class HomeFragment : Fragment() {
     private val binding get() = _binding!!
 
     private lateinit var homeViewModel: HomeViewModel
+    private lateinit var sharedViewModel: HomeViewModel
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -30,7 +31,7 @@ class HomeFragment : Fragment() {
         val root = binding.root
 
         homeViewModel = ViewModelProvider(this)[HomeViewModel::class.java]
-
+        //sharedViewModel = ViewModelProvider(this)[SharedViewModel::class.java]
         val buttons = listOf(
             binding.imageButton1,
             binding.imageButton2,
@@ -39,7 +40,6 @@ class HomeFragment : Fragment() {
             binding.imageButton5
         )
 
-        // Obserwacja URL-i obrazków
         homeViewModel.imageUrls.observe(viewLifecycleOwner) { urlList ->
             urlList.zip(buttons).forEach { (url, button) ->
                 Glide.with(requireContext())
@@ -50,7 +50,7 @@ class HomeFragment : Fragment() {
             }
         }
 
-        // Obsługa kliknięć
+
         val clickMap = mapOf(
             binding.imageButton1 to Pair(1, "Kobiety"),
             binding.imageButton2 to Pair(2, "Mężczyzna"),
