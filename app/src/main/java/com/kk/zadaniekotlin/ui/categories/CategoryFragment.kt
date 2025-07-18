@@ -38,12 +38,13 @@ class CategoryFragment : Fragment() {
     ): View {
         _binding = FragmentCategoryBinding.inflate(inflater, container, false)
 
-        adapter = CategoryAdapter(mutableListOf())
+        adapter = CategoryAdapter(mutableListOf(), sharedViewModel)
         binding.recyclerView2.layoutManager = GridLayoutManager(requireContext(), 3)
         binding.recyclerView2.adapter = adapter
 
         val args = CategoryFragmentArgs.fromBundle(requireArguments())
         val initialId = args.categoryId
+        sharedViewModel.setCatId(initialId)
         val initialName = categoryIdToName[initialId] ?: "Wszystkie"
 
 

@@ -42,7 +42,7 @@ class CategoryViewModel(private val savedStateHandle: SavedStateHandle) : ViewMo
         })
     }
 
-    fun getCurrentCategoryId(): Int = savedStateHandle[KEY_ID] ?: 6
+    fun getCurrentCategoryId(): Int = savedStateHandle[KEY_ID] ?: 6 //!!!!!!!!!!!
     fun getCurrentCategoryName(): String? = savedStateHandle[KEY_NAME]
     fun setCurrentCategory(id: Int, name: String) {
         savedStateHandle[KEY_ID] = id

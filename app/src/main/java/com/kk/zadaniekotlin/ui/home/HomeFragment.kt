@@ -1,5 +1,6 @@
 package com.kk.zadaniekotlin.ui.home
 
+import SharedViewModel
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
@@ -8,6 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
@@ -20,7 +22,7 @@ class HomeFragment : Fragment() {
     private val binding get() = _binding!!
 
     private lateinit var homeViewModel: HomeViewModel
-    private lateinit var sharedViewModel: HomeViewModel
+    private val sharedViewModel: SharedViewModel by activityViewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -31,7 +33,6 @@ class HomeFragment : Fragment() {
         val root = binding.root
 
         homeViewModel = ViewModelProvider(this)[HomeViewModel::class.java]
-        //sharedViewModel = ViewModelProvider(this)[SharedViewModel::class.java]
         val buttons = listOf(
             binding.imageButton1,
             binding.imageButton2,
@@ -62,9 +63,11 @@ class HomeFragment : Fragment() {
         clickMap.forEach { (button, pair) ->
             button.setOnClickListener {
                 Toast.makeText(requireContext(), "Kliknięto: ${pair.second}", Toast.LENGTH_SHORT).show()
+                sharedViewModel.setCatId(pair.first)
                 val action = HomeFragmentDirections.actionNavigationHomeToNavigationCategory(pair.first)
                 findNavController().navigate(action)
             }
+
         }
 
         return root
