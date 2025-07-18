@@ -1,30 +1,26 @@
 package com.kk.zadaniekotlin.ui.dashboard
 
+import SharedViewModel
 import com.kk.zadaniekotlin.model.Item
 import ItemAdapter
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.GridLayoutManager
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.database.ValueEventListener
-import com.kk.zadaniekotlin.R
 import com.kk.zadaniekotlin.databinding.FragmentDashboardBinding
-import com.kk.zadaniekotlin.model.ItemModelImpl
-import com.kk.zadaniekotlin.presenter.ItemPresenter
-import com.kk.zadaniekotlin.view.ItemView
 
-class DashboardFragment : Fragment(), ItemView {
+class DashboardFragment : Fragment() {
 
     private var _binding: FragmentDashboardBinding? = null
     private val binding get() = _binding!!
 
-    private lateinit var presenter: ItemPresenter
+    private val viewModel: DashboardViewModel by viewModels()
+    private val sharedViewModel: SharedViewModel by activityViewModels()
     private lateinit var adapter: ItemAdapter
 
     override fun onCreateView(
@@ -33,39 +29,46 @@ class DashboardFragment : Fragment(), ItemView {
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentDashboardBinding.inflate(inflater, container, false)
-
-        presenter = ItemPresenter(this, ItemModelImpl())
-        binding.recyclerView.layoutManager = GridLayoutManager(requireContext(), 2)
-        val itemList = mutableListOf<Item>()
-        adapter = ItemAdapter(itemList)
-        binding.recyclerView.adapter = adapter
-        loadItemsFromFirebase(adapter, itemList)
-
         return binding.root
     }
 
-    override fun showItems(items: List<Item>) {
-        adapter = ItemAdapter(items)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        adapter = ItemAdapter(mutableListOf())
+        binding.recyclerView.layoutManager = GridLayoutManager(requireContext(), 2)
         binding.recyclerView.adapter = adapter
-    }
-    fun loadItemsFromFirebase(adapter: ItemAdapter, itemList: MutableList<Item>) {
-        val database = FirebaseDatabase.getInstance()
-        val itemsRef = database.getReference("items")
 
-        itemsRef.addValueEventListener(object : ValueEventListener {
-            override fun onDataChange(snapshot: DataSnapshot) {
-                itemList.clear()
-                for (child in snapshot.children) {
-                    val item = child.getValue(Item::class.java)
-                    item?.let { itemList.add(it) }
+        val catId = sharedViewModel.catId.value ?: 0
+        val subCatId = sharedViewModel.subCatId.value ?: 0
+        viewModel.loadItems(catId, subCatId)
+
+        viewModel.uiState.observe(viewLifecycleOwner) { state ->
+            when (state) {
+                is DashboardUiState.Loading -> {
+                    binding.progressBar.visibility = View.VISIBLE
+                    binding.recyclerView.visibility = View.GONE
+                    binding.emptyTextView.visibility = View.GONE
                 }
-                adapter.notifyDataSetChanged()
+                is DashboardUiState.Success -> {
+                    binding.progressBar.visibility = View.GONE
+                    binding.recyclerView.visibility = View.VISIBLE
+                    binding.emptyTextView.visibility = View.GONE
+                    adapter.updateData(state.items)
+                }
+                is DashboardUiState.Empty -> {
+                    binding.progressBar.visibility = View.GONE
+                    binding.recyclerView.visibility = View.GONE
+                    binding.emptyTextView.visibility = View.VISIBLE
+                }
+                is DashboardUiState.Error -> {
+                    binding.progressBar.visibility = View.GONE
+                    binding.recyclerView.visibility = View.VISIBLE
+                    binding.emptyTextView.visibility = View.GONE
+                    Toast.makeText(requireContext(), "Błąd: ${state.exception.message}", Toast.LENGTH_SHORT).show()
+                }
             }
-
-            override fun onCancelled(error: DatabaseError) {
-                Log.e("Firebase", "Błąd podczas ładowania danych: ${error.message}")
-            }
-        })
+        }
     }
 
     override fun onDestroyView() {

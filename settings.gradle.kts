@@ -12,6 +12,7 @@ pluginManagement {
     }
     plugins{
         id("com.google.gms.google-services") version "4.4.1"
+        id("androidx.navigation.safeargs") version "2.7.7"
     }
 }
 dependencyResolutionManagement {
