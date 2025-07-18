@@ -23,14 +23,6 @@
         android:name="com.kk.zadaniekotlin.ui.dashboard.DashboardFragment"
         android:label="ClothesShop"
         tools:layout="@layout/fragment_dashboard">
-        <argument
-            android:name="catId"
-            app:argType="integer"
-            android:defaultValue="1" />
-        <argument
-            android:name="subCatId"
-            app:argType="integer"
-            android:defaultValue="1" />
     </fragment>
 
     <fragment

@@ -2,9 +2,10 @@ package com.kk.zadaniekotlin.ui.categories
 
 import android.util.Log
 import androidx.lifecycle.*
+import androidx.navigation.Navigation.findNavController
 import com.google.firebase.database.*
 import com.kk.zadaniekotlin.model.Category
-
+import com.kk.zadaniekotlin.R
 class CategoryViewModel(private val savedStateHandle: SavedStateHandle) : ViewModel() {
 
     companion object {
@@ -23,7 +24,7 @@ class CategoryViewModel(private val savedStateHandle: SavedStateHandle) : ViewMo
             3 -> FirebaseDatabase.getInstance().getReference("BabyCategories")
             4 -> FirebaseDatabase.getInstance().getReference("GirlCategories")
             5 -> FirebaseDatabase.getInstance().getReference("BoyCategories")
-            else -> FirebaseDatabase.getInstance().getReference("categories")
+            else -> FirebaseDatabase.getInstance().getReference("items")
         }
 
         ref.addListenerForSingleValueEvent(object : ValueEventListener {

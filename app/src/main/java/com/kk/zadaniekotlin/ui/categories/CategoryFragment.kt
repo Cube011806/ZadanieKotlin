@@ -6,10 +6,13 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
+import com.kk.zadaniekotlin.R
 import com.kk.zadaniekotlin.databinding.FragmentCategoryBinding
 
 class CategoryFragment : Fragment() {
@@ -44,15 +47,20 @@ class CategoryFragment : Fragment() {
 
         val args = CategoryFragmentArgs.fromBundle(requireArguments())
         val initialId = args.categoryId
-        sharedViewModel.setCatId(initialId)
         val initialName = categoryIdToName[initialId] ?: "Wszystkie"
 
+        sharedViewModel.setCatId(initialId)
 
-        if (viewModel.getCurrentCategoryName() == null) {
-            viewModel.setCurrentCategory(initialId, initialName)
-            viewModel.loadCategories(initialId)
+        if (initialId == 0) {
+            sharedViewModel.setSubCatId(0)
+            findNavController().navigate(R.id.navigation_dashboard)
         } else {
-            viewModel.loadCategories(viewModel.getCurrentCategoryId())
+            if (viewModel.getCurrentCategoryName() == null) {
+                viewModel.setCurrentCategory(initialId, initialName)
+                viewModel.loadCategories(initialId)
+            } else {
+                viewModel.loadCategories(viewModel.getCurrentCategoryId())
+            }
         }
 
         viewModel.categories.observe(viewLifecycleOwner) { list ->
@@ -72,8 +80,16 @@ class CategoryFragment : Fragment() {
                 .setPositiveButton("Zatwierdź") { _, _ ->
                     val selectedName = categories[tempSelection]
                     val selectedId = categoryNameToId[selectedName] ?: return@setPositiveButton
-                    viewModel.setCurrentCategory(selectedId, selectedName)
-                    viewModel.loadCategories(selectedId)
+
+                    sharedViewModel.setCatId(selectedId)
+
+                    if (selectedId == 0) {
+                        sharedViewModel.setSubCatId(0)
+                        findNavController().navigate(R.id.navigation_dashboard)
+                    } else {
+                        viewModel.setCurrentCategory(selectedId, selectedName)
+                        viewModel.loadCategories(selectedId)
+                    }
                 }
                 .setNegativeButton("Anuluj", null)
                 .show()

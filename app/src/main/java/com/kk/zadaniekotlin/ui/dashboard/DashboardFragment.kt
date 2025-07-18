@@ -43,8 +43,7 @@ class DashboardFragment : Fragment() {
         val catId = sharedViewModel.catId.value ?: return
         val subCatId = sharedViewModel.subCatId.value ?: return
         viewModel.loadItems(catId, subCatId)
-
-
+        
 
 
         viewModel.items.observe(viewLifecycleOwner) { itemList ->

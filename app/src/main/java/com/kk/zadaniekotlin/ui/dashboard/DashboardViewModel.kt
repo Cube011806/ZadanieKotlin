@@ -17,9 +17,14 @@ class DashboardViewModel(private val savedStateHandle: SavedStateHandle) : ViewM
         val ref = FirebaseDatabase.getInstance().getReference("items")
         ref.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
-                val filtered = snapshot.children
+                val allItems = snapshot.children
                     .mapNotNull { it.getValue(Item::class.java) }
-                    .filter { it.catId == catId && it.subCatId == subCatId }
+
+                val filtered = if (catId != 0 && subCatId != 0) {
+                    allItems.filter { it.catId == catId && it.subCatId == subCatId }
+                } else {
+                    allItems
+                }
 
                 _items.value = filtered
             }
