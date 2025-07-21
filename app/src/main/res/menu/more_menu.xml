@@ -4,7 +4,7 @@
         android:title="Zmień język"
         android:icon="@drawable/arrow_back_24px" />
     <item
-        android:id="@+id/menu_help"
-        android:title="Pomoc"
+        android:id="@+id/menu_logout"
+        android:title="Wyloguj się"
         android:icon="@drawable/ic_dashboard_black_24dp" />
 </menu>

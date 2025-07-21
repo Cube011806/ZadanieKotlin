@@ -1,5 +1,6 @@
 package com.kk.zadaniekotlin
 
+import com.kk.zadaniekotlin.LoginActivity
 import SharedViewModel
 import android.content.Intent
 import android.os.Bundle
@@ -10,19 +11,20 @@ import android.widget.PopupMenu
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.widget.Toolbar
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
-import com.bumptech.glide.Glide
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.firebase.FirebaseApp
+import com.google.firebase.auth.FirebaseAuth
 import com.kk.zadaniekotlin.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
+    private var isUserLoggedIn: Boolean = false
+
     private val sharedViewModel: SharedViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -30,6 +32,8 @@ class MainActivity : AppCompatActivity() {
         FirebaseApp.initializeApp(this)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        isUserLoggedIn = FirebaseAuth.getInstance().currentUser != null
+        invalidateOptionsMenu()
 
         val navController = findNavController(R.id.nav_host_fragment_activity_main)
         val navView: BottomNavigationView = binding.navView
@@ -61,6 +65,19 @@ class MainActivity : AppCompatActivity() {
             }
         }
     }
+    override fun onResume() {
+        super.onResume()
+        isUserLoggedIn = FirebaseAuth.getInstance().currentUser != null
+        invalidateOptionsMenu()
+    }
+
+    override fun onPrepareOptionsMenu(menu: Menu?): Boolean {
+        menu?.findItem(R.id.action_login)?.isVisible = !isUserLoggedIn
+        menu?.findItem(R.id.menu_logout)?.isVisible = isUserLoggedIn
+        return super.onPrepareOptionsMenu(menu)
+    }
+
+
 
     private fun showMoreMenu(anchorView: View) {
         val popup = PopupMenu(this, anchorView)
@@ -71,10 +88,15 @@ class MainActivity : AppCompatActivity() {
                     Toast.makeText(this, "Zmień język kliknięte", Toast.LENGTH_SHORT).show()
                     true
                 }
-                R.id.menu_help -> {
-                    Toast.makeText(this, "Pomoc kliknięte", Toast.LENGTH_SHORT).show()
+                R.id.menu_logout -> {
+                    FirebaseAuth.getInstance().signOut()
+                    isUserLoggedIn = false
+                    invalidateOptionsMenu()
+                    Toast.makeText(this, "Wylogowano", Toast.LENGTH_SHORT).show()
                     true
                 }
+
+
                 else -> false
             }
         }

@@ -6,7 +6,9 @@ import androidx.navigation.Navigation.findNavController
 import com.google.firebase.database.*
 import com.kk.zadaniekotlin.model.Category
 import com.kk.zadaniekotlin.R
-class CategoryViewModel(private val savedStateHandle: SavedStateHandle) : ViewModel() {
+import javax.inject.Inject
+
+class CategoryViewModel @Inject constructor(private val savedStateHandle: SavedStateHandle)  : ViewModel() {
 
     companion object {
         private const val KEY_ID = "categoryId"

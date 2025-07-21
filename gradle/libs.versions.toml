@@ -20,6 +20,7 @@ composeBom = "2024.09.00"
 activity = "1.10.1"
 kotlinCompilerExtensionVersion = "1.5.3"
 cardview = "1.0.0"
+firebase-auth = "22.3.0"
 
 
 [libraries]
@@ -48,6 +49,7 @@ androidx-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit
 androidx-material3 = { group = "androidx.compose.material3", name = "material3" }
 androidx-activity = { group = "androidx.activity", name = "activity", version.ref = "activity" }
 androidx-cardview = { group = "androidx.cardview", name = "cardview", version.ref = "cardview" }
+firebase-auth = { group = "com.google.firebase", name = "firebase-auth", version.ref = "firebase-auth" }
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
