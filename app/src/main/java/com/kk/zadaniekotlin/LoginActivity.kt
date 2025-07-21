@@ -1,14 +1,11 @@
 package com.kk.zadaniekotlin
+
 import android.content.Intent
 import android.os.Bundle
-import android.widget.Button
-import android.widget.EditText
-import android.widget.Toast
+import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
-import com.kk.zadaniekotlin.AuthState
-import com.kk.zadaniekotlin.LoginViewModel
-import com.kk.zadaniekotlin.R
+
 class LoginActivity : AppCompatActivity() {
 
     private lateinit var loginViewModel: LoginViewModel
@@ -23,22 +20,18 @@ class LoginActivity : AppCompatActivity() {
         val passwordField = findViewById<EditText>(R.id.loginPassword)
         val loginButton = findViewById<Button>(R.id.loginButton)
         val registerButton = findViewById<Button>(R.id.registerButton)
+        val backButton = findViewById<Button>(R.id.backButton)
 
         loginButton.setOnClickListener {
             val email = emailField.text.toString().trim()
             val password = passwordField.text.toString()
-
             if (email.isEmpty() || password.isEmpty()) {
                 Toast.makeText(this, "Wypełnij wszystkie pola", Toast.LENGTH_SHORT).show()
             } else {
                 loginViewModel.login(email, password)
-                val intent = Intent()
-                intent.putExtra("isLoggedIn", true)
-                setResult(RESULT_OK, intent)
-                finish()
-
             }
         }
+
         registerButton.setOnClickListener {
             val email = emailField.text.toString().trim()
             val password = passwordField.text.toString()
@@ -49,14 +42,18 @@ class LoginActivity : AppCompatActivity() {
             }
         }
 
+        backButton.setOnClickListener {
+            onBackPressedDispatcher.onBackPressed()
+        }
+
         loginViewModel.authState.observe(this) { state ->
             when (state) {
-                is AuthState.Loading -> {
-
-                }
+                is AuthState.Loading -> { /* Opcjonalny spinner */ }
                 is AuthState.LoggedIn -> {
                     Toast.makeText(this, "Zalogowano pomyślnie!", Toast.LENGTH_SHORT).show()
-
+                    val intent = Intent(this, MainActivity::class.java)
+                    intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                    startActivity(intent)
                 }
                 is AuthState.Registered -> {
                     Toast.makeText(this, "Zarejestrowano pomyślnie!", Toast.LENGTH_SHORT).show()
@@ -65,9 +62,6 @@ class LoginActivity : AppCompatActivity() {
                     Toast.makeText(this, "Błąd: ${state.message}", Toast.LENGTH_SHORT).show()
                 }
             }
-        }
-        findViewById<Button>(R.id.backButton).setOnClickListener {
-            onBackPressedDispatcher.onBackPressed()
         }
     }
 }

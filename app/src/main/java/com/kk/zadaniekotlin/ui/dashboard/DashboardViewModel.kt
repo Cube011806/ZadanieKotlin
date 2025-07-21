@@ -10,7 +10,7 @@ import com.google.firebase.database.*
 import com.kk.zadaniekotlin.model.Item
 import javax.inject.Inject
 
-class DashboardViewModel @Inject constructor(private val savedStateHandle: SavedStateHandle) : ViewModel() {
+class DashboardViewModel(private val savedStateHandle: SavedStateHandle) : ViewModel() {
 
     private val _items = MutableLiveData<List<Item>>()
     val items: LiveData<List<Item>> = _items

@@ -8,7 +8,6 @@ import com.google.firebase.auth.FirebaseAuth
 class LoginViewModel : ViewModel() {
 
     private val auth = FirebaseAuth.getInstance()
-
     private val _authState = MutableLiveData<AuthState>()
     val authState: LiveData<AuthState> = _authState
 
@@ -18,8 +17,8 @@ class LoginViewModel : ViewModel() {
             .addOnSuccessListener {
                 _authState.value = AuthState.LoggedIn
             }
-            .addOnFailureListener { e ->
-                _authState.value = AuthState.Error(e.message ?: "Nieznany błąd logowania")
+            .addOnFailureListener {
+                _authState.value = AuthState.Error(it.message ?: "Błąd logowania")
             }
     }
 
@@ -29,8 +28,8 @@ class LoginViewModel : ViewModel() {
             .addOnSuccessListener {
                 _authState.value = AuthState.Registered
             }
-            .addOnFailureListener { e ->
-                _authState.value = AuthState.Error(e.message ?: "Nieznany błąd rejestracji")
+            .addOnFailureListener {
+                _authState.value = AuthState.Error(it.message ?: "Błąd rejestracji")
             }
     }
 }
@@ -41,3 +40,4 @@ sealed class AuthState {
     object Registered : AuthState()
     data class Error(val message: String) : AuthState()
 }
+
