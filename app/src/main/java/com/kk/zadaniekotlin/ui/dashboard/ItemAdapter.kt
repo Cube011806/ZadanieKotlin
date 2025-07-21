@@ -8,6 +8,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.google.firebase.auth.FirebaseAuth
 import com.kk.zadaniekotlin.R
 import com.kk.zadaniekotlin.model.Item
 
@@ -39,6 +40,8 @@ class ItemAdapter(
             .placeholder(ColorDrawable(Color.WHITE))
             .error(ColorDrawable(Color.RED))
             .into(holder.itemImage)
+        val currentUser = FirebaseAuth.getInstance().currentUser
+        holder.itemButton.visibility = if (currentUser == null) View.GONE else View.VISIBLE
 
         holder.itemButton.setImageResource(R.drawable.add_shopping_cart_24)
 
