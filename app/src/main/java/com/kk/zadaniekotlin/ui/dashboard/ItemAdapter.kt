@@ -6,14 +6,18 @@ import android.view.ViewGroup
 import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.google.firebase.auth.FirebaseAuth
 import com.kk.zadaniekotlin.R
 import com.kk.zadaniekotlin.model.Item
+import com.kk.zadaniekotlin.ui.basket.BasketViewModel
+import kotlin.getValue
 
 class ItemAdapter(
     private val items: MutableList<Item>,
+    private val viewModel: BasketViewModel,
     private val onAddToCart: (Item) -> Unit
 ) : RecyclerView.Adapter<ItemAdapter.ItemViewHolder>() {
 
@@ -32,22 +36,27 @@ class ItemAdapter(
     override fun onBindViewHolder(holder: ItemViewHolder, position: Int) {
         val item = items[position]
 
+        val isInCart = viewModel.cartItems.value?.contains(item) == true
+        holder.itemButton.setImageResource(
+            if (isInCart) R.drawable.shopping_cart
+            else R.drawable.add_shopping_cart_24
+        )
+
         holder.itemTitle.text = item.title
-        holder.itemPrice.text = item.price.toString() + " zł"
+        holder.itemPrice.text = "${item.price} zł"
 
         Glide.with(holder.itemView.context)
             .load(item.imageUrl)
             .placeholder(ColorDrawable(Color.WHITE))
             .error(ColorDrawable(Color.RED))
             .into(holder.itemImage)
+
         val currentUser = FirebaseAuth.getInstance().currentUser
         holder.itemButton.visibility = if (currentUser == null) View.GONE else View.VISIBLE
 
-        holder.itemButton.setImageResource(R.drawable.add_shopping_cart_24)
-
         holder.itemButton.setOnClickListener {
-            holder.itemButton.setImageResource(R.drawable.shopping_cart)
-            onAddToCart(item)
+                onAddToCart(item)
+                holder.itemButton.setImageResource(R.drawable.shopping_cart)
         }
     }
 

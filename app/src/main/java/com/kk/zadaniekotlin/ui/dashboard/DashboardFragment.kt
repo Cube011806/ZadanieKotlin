@@ -11,7 +11,6 @@ import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.GridLayoutManager
 import com.kk.zadaniekotlin.databinding.FragmentDashboardBinding
 import com.kk.zadaniekotlin.ui.basket.BasketViewModel
-
 class DashboardFragment : Fragment() {
 
     private var _binding: FragmentDashboardBinding? = null
@@ -35,9 +34,8 @@ class DashboardFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        adapter = ItemAdapter(mutableListOf()) { item ->
+        adapter = ItemAdapter(mutableListOf(), basketViewModel) { item ->
             basketViewModel.addItem(item)
-            Toast.makeText(requireContext(), "${item.title} dodano do koszyka", Toast.LENGTH_SHORT).show()
         }
 
         binding.recyclerView.layoutManager = GridLayoutManager(requireContext(), 2)

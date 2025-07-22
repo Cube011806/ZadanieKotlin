@@ -17,7 +17,7 @@
         android:fontFamily="sans-serif-medium"
         android:text="Zaloguj się"
         android:textAlignment="center"
-        android:textColor="@color/purple_700"
+        android:textColor="@color/purple_500"
         android:textSize="32sp"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"

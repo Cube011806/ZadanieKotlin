@@ -41,7 +41,7 @@ class BasketFragment : Fragment() {
 
         adapter = BasketItemAdapter(mutableListOf()) { item ->
             viewModel.removeItem(item)
-            viewModel.saveCartToFirebase() // automatyczny zapis po usunięciu
+            viewModel.saveCartToFirebase()
         }
 
         binding.recyclerView.layoutManager = GridLayoutManager(requireContext(), 1)
@@ -61,15 +61,15 @@ class BasketFragment : Fragment() {
             binding.progressBar.visibility = if (state is BasketUiState.Loading) View.VISIBLE else View.GONE
         }
 
-        // automatyczny zapis koszyka po załadowaniu danych
         viewModel.cartItems.observe(viewLifecycleOwner) {
             viewModel.saveCartToFirebase()
         }
 
-        binding.button2.setOnClickListener {
-            viewModel.saveCartToFirebase()
-            Toast.makeText(requireContext(), "Koszyk zapisany w bazie Firebase!", Toast.LENGTH_SHORT).show()
-        }
+
+//        binding.button2.setOnClickListener {
+//            viewModel.saveCartToFirebase()
+//            Toast.makeText(requireContext(), "Koszyk zapisany w bazie Firebase!", Toast.LENGTH_SHORT).show()
+//        }
 
         viewModel.loadCartFromFirebase()
     }

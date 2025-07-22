@@ -12,6 +12,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
@@ -20,11 +21,13 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.firebase.FirebaseApp
 import com.google.firebase.auth.FirebaseAuth
 import com.kk.zadaniekotlin.databinding.ActivityMainBinding
+import com.kk.zadaniekotlin.ui.basket.BasketViewModel
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
     private val sharedViewModel: SharedViewModel by viewModels()
+    private val basketViewModel: BasketViewModel by viewModels()
     private var isUserLoggedIn: Boolean = false
 
     private val loginLauncher =
@@ -33,6 +36,7 @@ class MainActivity : AppCompatActivity() {
                 val loggedIn = result.data?.getBooleanExtra("isLoggedIn", false) ?: false
                 if (loggedIn || FirebaseAuth.getInstance().currentUser != null) {
                     isUserLoggedIn = true
+                    basketViewModel.loadCartFromFirebase() // 🛒 Wczytanie koszyka po logowaniu
                     invalidateOptionsMenu()
                     supportActionBar?.title = "Witaj!"
                     Toast.makeText(this, "Logowanie zakończone!", Toast.LENGTH_SHORT).show()
@@ -48,17 +52,30 @@ class MainActivity : AppCompatActivity() {
 
         isUserLoggedIn = FirebaseAuth.getInstance().currentUser != null
 
+        if (isUserLoggedIn) {
+            basketViewModel.loadCartFromFirebase()
+        }
+
         val navController = findNavController(R.id.nav_host_fragment_activity_main)
         val navView: BottomNavigationView = binding.navView
 
         setSupportActionBar(findViewById(R.id.topBar))
         val appBarConfiguration = AppBarConfiguration(setOf(R.id.navigation_home))
         setupActionBarWithNavController(navController, appBarConfiguration)
+
         val drawable = ContextCompat.getDrawable(this, R.drawable.arrow_back_24px)
         drawable?.setTint(ContextCompat.getColor(this, android.R.color.white))
         supportActionBar?.setHomeAsUpIndicator(drawable)
 
-        //supportActionBar?.setHomeAsUpIndicator(drawable)
+        val badge = navView.getOrCreateBadge(R.id.navigation_basket)
+        badge.number = basketViewModel.cartItems.value?.size ?: 0
+        badge.isVisible = true
+
+        basketViewModel.cartItems.observe(this) { items ->
+            val badge = navView.getOrCreateBadge(R.id.navigation_basket)
+            badge.number = items.size
+            badge.isVisible = items.isNotEmpty()
+        }
 
         navView.setupWithNavController(navController)
 
@@ -112,7 +129,6 @@ class MainActivity : AppCompatActivity() {
                 true
             }
             android.R.id.home -> {
-
                 onBackPressedDispatcher.onBackPressed()
                 true
             }
@@ -123,6 +139,12 @@ class MainActivity : AppCompatActivity() {
     private fun showMoreMenu(anchorView: View) {
         val popup = PopupMenu(this, anchorView)
         popup.menuInflater.inflate(R.menu.more_menu, popup.menu)
+
+        val currentUser = FirebaseAuth.getInstance().currentUser
+        if (currentUser == null) {
+            popup.menu.findItem(R.id.menu_logout)?.isVisible = false
+        }
+
         popup.setOnMenuItemClickListener { menuItem ->
             when (menuItem.itemId) {
                 R.id.menu_change_language -> {
@@ -131,12 +153,23 @@ class MainActivity : AppCompatActivity() {
                 }
                 R.id.menu_logout -> {
                     FirebaseAuth.getInstance().signOut()
-                    isUserLoggedIn = false
                     invalidateOptionsMenu()
-                    supportActionBar?.title = getString(R.string.app_name)
+                    isUserLoggedIn = false
+
+                    val navView = binding.navView
+                    val badge = navView.getBadge(R.id.navigation_basket)
+                    badge?.isVisible = false
+                    badge?.clearNumber()
+
+                    val navController = findNavController(R.id.nav_host_fragment_activity_main)
+                    navController.popBackStack(R.id.navigation_home, false)
+                    navController.navigate(R.id.navigation_home)
+
                     Toast.makeText(this, "Wylogowano", Toast.LENGTH_SHORT).show()
+                    onPrepareOptionsMenu(binding.topBar.menu)
                     true
                 }
+
                 else -> false
             }
         }
