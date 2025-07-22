@@ -1,0 +1,10 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/menu_change_language"
+        android:title="Zmień język"
+        android:icon="@drawable/arrow_back_24px" />
+    <item
+        android:id="@+id/menu_logout"
+        android:title="Wyloguj się"
+        android:icon="@drawable/ic_dashboard_black_24dp" />
+</menu>

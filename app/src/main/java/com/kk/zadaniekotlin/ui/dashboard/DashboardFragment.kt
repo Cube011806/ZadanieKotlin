@@ -4,23 +4,22 @@ import SharedViewModel
 import com.kk.zadaniekotlin.model.Item
 import ItemAdapter
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.GridLayoutManager
 import com.kk.zadaniekotlin.databinding.FragmentDashboardBinding
-
+import com.kk.zadaniekotlin.ui.basket.BasketViewModel
 class DashboardFragment : Fragment() {
 
     private var _binding: FragmentDashboardBinding? = null
     private val binding get() = _binding!!
 
-    private val viewModel: DashboardViewModel by viewModels()
+    private val viewModel: DashboardViewModel by activityViewModels()
     private val sharedViewModel: SharedViewModel by activityViewModels()
+    private val basketViewModel: BasketViewModel by activityViewModels()
+
     private lateinit var adapter: ItemAdapter
 
     override fun onCreateView(
@@ -35,7 +34,10 @@ class DashboardFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        adapter = ItemAdapter(mutableListOf())
+        adapter = ItemAdapter(mutableListOf(), basketViewModel) { item ->
+            basketViewModel.addItem(item)
+        }
+
         binding.recyclerView.layoutManager = GridLayoutManager(requireContext(), 2)
         binding.recyclerView.adapter = adapter
 

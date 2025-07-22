@@ -1,8 +1,9 @@
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import javax.inject.Inject
 
-class SharedViewModel : ViewModel() {
+class SharedViewModel @Inject constructor() : ViewModel() {
 
     private val _catId = MutableLiveData<Int>().apply { value = 0 }
     val catId: LiveData<Int> get() = _catId

@@ -8,6 +8,7 @@ import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import com.google.firebase.database.*
 import com.kk.zadaniekotlin.model.Item
+import javax.inject.Inject
 
 class DashboardViewModel(private val savedStateHandle: SavedStateHandle) : ViewModel() {
 

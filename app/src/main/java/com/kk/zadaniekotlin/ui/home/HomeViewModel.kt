@@ -10,8 +10,9 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import com.kk.zadaniekotlin.ui.home.HomeUiState
+import javax.inject.Inject
 
-class HomeViewModel(private val savedStateHandle: SavedStateHandle) : ViewModel() {
+class HomeViewModel @Inject constructor(private val savedStateHandle: SavedStateHandle) : ViewModel() {
 
     companion object {
         private const val KEY_IMAGE_URLS = "imageUrls"
