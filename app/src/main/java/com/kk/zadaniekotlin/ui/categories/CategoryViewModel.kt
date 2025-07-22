@@ -58,3 +58,9 @@ class CategoryViewModel @Inject constructor(private val savedStateHandle: SavedS
         savedStateHandle[KEY_NAME] = name
     }
 }
+sealed class CategoryUiState {
+    data object Loading : CategoryUiState()
+    data class Success(val categories: List<Category>) : CategoryUiState()
+    data object Empty : CategoryUiState()
+    data class Error(val message: String) : CategoryUiState()
+}

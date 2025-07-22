@@ -66,3 +66,9 @@ class BasketViewModel : ViewModel() {
         })
     }
 }
+sealed class BasketUiState {
+    data object Loading : BasketUiState()
+    data class Success(val basket: List<Item>) : BasketUiState()
+    data object Empty : BasketUiState()
+    data class Error(val message: String) : BasketUiState()
+}

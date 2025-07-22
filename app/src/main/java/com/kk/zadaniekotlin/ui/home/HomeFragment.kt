@@ -13,9 +13,9 @@ import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
+import com.kk.zadaniekotlin.HomeUiState
 import com.kk.zadaniekotlin.HomeViewModel
 import com.kk.zadaniekotlin.databinding.FragmentHomeBinding
-import com.kk.zadaniekotlin.ui.home.HomeUiState
 
 class HomeFragment : Fragment() {
     private var _binding: FragmentHomeBinding? = null

@@ -9,7 +9,6 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
-import com.kk.zadaniekotlin.ui.home.HomeUiState
 import javax.inject.Inject
 
 class HomeViewModel @Inject constructor(private val savedStateHandle: SavedStateHandle) : ViewModel() {
@@ -71,4 +70,10 @@ class HomeViewModel @Inject constructor(private val savedStateHandle: SavedState
 
     fun getSelectedCategoryId(): Int = savedStateHandle[KEY_SELECTED_CATEGORY_ID] ?: 6
     fun getSelectedCategoryName(): String? = savedStateHandle[KEY_SELECTED_CATEGORY_NAME]
+}
+sealed class HomeUiState {
+    data object Loading : HomeUiState()
+    data class Success(val imageUrls: List<String>) : HomeUiState()
+    data object Empty : HomeUiState()
+    data class Error(val message: String) : HomeUiState()
 }

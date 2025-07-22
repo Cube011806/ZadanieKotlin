@@ -1,6 +1,5 @@
-package com.kk.zadaniekotlin.ui.dashboard
+package com.kk.zadaniekotlin.ui.dashboardimport
 
-import DashboardUiState
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -48,4 +47,10 @@ class DashboardViewModel(private val savedStateHandle: SavedStateHandle) : ViewM
             }
         })
     }
+}
+sealed class DashboardUiState {
+    data object Loading : DashboardUiState()
+    data class Success(val items: List<Item>) : DashboardUiState()
+    data object Empty : DashboardUiState()
+    data class Error(val exception: Exception) : DashboardUiState()
 }

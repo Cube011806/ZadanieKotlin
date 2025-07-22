@@ -11,6 +11,9 @@ import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.GridLayoutManager
 import com.kk.zadaniekotlin.databinding.FragmentDashboardBinding
 import com.kk.zadaniekotlin.ui.basket.BasketViewModel
+import com.kk.zadaniekotlin.ui.dashboardimport.DashboardUiState
+import com.kk.zadaniekotlin.ui.dashboardimport.DashboardViewModel
+
 class DashboardFragment : Fragment() {
 
     private var _binding: FragmentDashboardBinding? = null
