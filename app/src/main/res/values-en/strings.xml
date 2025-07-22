@@ -1,0 +1,28 @@
+<resources>
+    <string name="app_name">ZadanieKotlin</string>
+    <string name="title_home">Home</string>
+    <string name="title_dashboard">Catalog</string>
+    <string name="title_notifications">Basket</string>
+    <string name="title_more">More</string>
+    <string name="title_activity_login">LoginActivity</string>
+    <string name="cat_woman">Women</string>
+    <string name="cat_men">Men</string>
+    <string name="cat_toddler">Baby</string>
+    <string name="cat_girl">Girl</string>
+    <string name="cat_boy">Boy</string>
+    <string name="basket_descr">Item prices:</string>
+    <string name="basket_checkout">Go to checkout</string>
+    <string name="more_language">Change language</string>
+    <string name="more_logout">Logout</string>
+    <string name="basket_empty">The basket is empty</string>
+    <string name="basket_notLoggedIn">The basket is available only for logged in users</string>
+    <string name="filter_chooseCat">Choose category</string>
+    <string name="filter_confirm">Confirm</string>
+    <string name="filter_cancel">Cancel</string>
+    <string name="login_back">Go back</string>
+    <string name="login_register">Register</string>
+    <string name="login_message">Log in</string>
+    <string name="login_password">Password</string>
+    <string name="login_hintEmail">Email is required</string>
+    <string name="login_hintPassword">Password is required</string>
+</resources>

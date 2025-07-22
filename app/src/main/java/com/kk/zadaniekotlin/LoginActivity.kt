@@ -4,7 +4,6 @@ import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import android.view.View
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
@@ -47,8 +46,8 @@ class LoginActivity : AppCompatActivity() {
             val isEmailValid = email.isNotEmpty()
             val isPasswordValid = password.isNotEmpty()
 
-            emailLayout.error = if (!isEmailValid) "Email wymagany" else null
-            passwordLayout.error = if (!isPasswordValid) "Hasło wymagane" else null
+            emailLayout.error = if (!isEmailValid) getString(R.string.login_hintEmail) else null
+            passwordLayout.error = if (!isPasswordValid) getString(R.string.login_hintPassword) else null
 
             if (isEmailValid && isPasswordValid) {
                 loginViewModel.login(email, password)
@@ -62,8 +61,8 @@ class LoginActivity : AppCompatActivity() {
             val isEmailValid = email.isNotEmpty()
             val isPasswordValid = password.isNotEmpty()
 
-            emailLayout.error = if (!isEmailValid) "Email wymagany" else null
-            passwordLayout.error = if (!isPasswordValid) "Hasło wymagane" else null
+            emailLayout.error = if (!isEmailValid) getString(R.string.login_hintEmail) else null
+            passwordLayout.error = if (!isPasswordValid) getString(R.string.login_hintPassword) else null
 
             if (isEmailValid && isPasswordValid) {
                 loginViewModel.register(email, password)

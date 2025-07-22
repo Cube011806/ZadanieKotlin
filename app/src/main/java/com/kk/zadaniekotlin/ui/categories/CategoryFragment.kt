@@ -94,13 +94,15 @@ class CategoryFragment : Fragment() {
             val categories = categoryNameToId.keys.toList()
             val selectedIndex = categories.indexOf(viewModel.getCurrentCategoryName() ?: "Wszystkie")
             var tempSelection = selectedIndex
-
+            val cat = getString(R.string.filter_chooseCat)
+            val confirmBut = getString(R.string.filter_confirm)
+            val cancelBut = getString(R.string.filter_cancel)
             AlertDialog.Builder(requireContext())
-                .setTitle("Wybierz kategorię")
+                .setTitle(cat)
                 .setSingleChoiceItems(categories.toTypedArray(), selectedIndex) { _, which ->
                     tempSelection = which
                 }
-                .setPositiveButton("Zatwierdź") { _, _ ->
+                .setPositiveButton(confirmBut) { _, _ ->
                     val selectedName = categories[tempSelection]
                     val selectedId = categoryNameToId[selectedName] ?: return@setPositiveButton
 
@@ -114,7 +116,7 @@ class CategoryFragment : Fragment() {
                         viewModel.loadCategories(selectedId)
                     }
                 }
-                .setNegativeButton("Anuluj", null)
+                .setNegativeButton(cancelBut, null)
                 .show()
         }
 

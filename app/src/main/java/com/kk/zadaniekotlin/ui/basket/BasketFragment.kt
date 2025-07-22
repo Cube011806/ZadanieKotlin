@@ -4,13 +4,12 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.GridLayoutManager
 import com.google.firebase.auth.FirebaseAuth
+import com.kk.zadaniekotlin.R
 import com.kk.zadaniekotlin.databinding.FragmentBasketBinding
-import com.kk.zadaniekotlin.model.Item
 
 class BasketFragment : Fragment() {
 
@@ -30,7 +29,7 @@ class BasketFragment : Fragment() {
 
         if (currentUser == null) {
             binding.recyclerView.visibility = View.GONE
-            binding.emptyTextView.text = "Koszyk dostępny tylko po zalogowaniu"
+            binding.emptyTextView.text = getString(R.string.basket_notLoggedIn)
             binding.textView3.visibility = View.GONE
             binding.emptyTextView.visibility = View.VISIBLE
             binding.progressBar.visibility = View.GONE
@@ -64,12 +63,6 @@ class BasketFragment : Fragment() {
         viewModel.cartItems.observe(viewLifecycleOwner) {
             viewModel.saveCartToFirebase()
         }
-
-
-//        binding.button2.setOnClickListener {
-//            viewModel.saveCartToFirebase()
-//            Toast.makeText(requireContext(), "Koszyk zapisany w bazie Firebase!", Toast.LENGTH_SHORT).show()
-//        }
 
         viewModel.loadCartFromFirebase()
     }

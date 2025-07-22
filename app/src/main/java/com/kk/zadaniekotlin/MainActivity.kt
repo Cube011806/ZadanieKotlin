@@ -10,9 +10,9 @@ import android.widget.PopupMenu
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
-import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
@@ -22,6 +22,7 @@ import com.google.firebase.FirebaseApp
 import com.google.firebase.auth.FirebaseAuth
 import com.kk.zadaniekotlin.databinding.ActivityMainBinding
 import com.kk.zadaniekotlin.ui.basket.BasketViewModel
+import java.util.Locale
 
 class MainActivity : AppCompatActivity() {
 
@@ -36,7 +37,7 @@ class MainActivity : AppCompatActivity() {
                 val loggedIn = result.data?.getBooleanExtra("isLoggedIn", false) ?: false
                 if (loggedIn || FirebaseAuth.getInstance().currentUser != null) {
                     isUserLoggedIn = true
-                    basketViewModel.loadCartFromFirebase() // 🛒 Wczytanie koszyka po logowaniu
+                    basketViewModel.loadCartFromFirebase()
                     invalidateOptionsMenu()
                     supportActionBar?.title = "Witaj!"
                     Toast.makeText(this, "Logowanie zakończone!", Toast.LENGTH_SHORT).show()
@@ -148,9 +149,21 @@ class MainActivity : AppCompatActivity() {
         popup.setOnMenuItemClickListener { menuItem ->
             when (menuItem.itemId) {
                 R.id.menu_change_language -> {
-                    Toast.makeText(this, "Zmień język kliknięte", Toast.LENGTH_SHORT).show()
+                    val languages = resources.getStringArray(R.array.language_options)
+                    AlertDialog.Builder(this)
+                        .setTitle("Wybierz język")
+                        .setItems(languages) { dialog, which ->
+                            val selected = languages[which]
+                            when (selected) {
+                                "Polski" -> setAppLocale("pl")
+                                "English" -> setAppLocale("en")
+                            }
+                        }
+                        .setNegativeButton("Anuluj", null)
+                        .show()
                     true
                 }
+
                 R.id.menu_logout -> {
                     FirebaseAuth.getInstance().signOut()
                     invalidateOptionsMenu()
@@ -182,4 +195,13 @@ class MainActivity : AppCompatActivity() {
         sharedViewModel.setSubCatId(0)
         return navController.navigateUp() || super.onSupportNavigateUp()
     }
+    private fun setAppLocale(language: String) {
+        val config = resources.configuration
+        val locale = Locale(language)
+        Locale.setDefault(locale)
+        config.setLocale(locale)
+        resources.updateConfiguration(config, resources.displayMetrics)
+        recreate()
+    }
+
 }
