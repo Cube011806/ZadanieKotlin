@@ -1,5 +1,6 @@
 package com.kk.zadaniekotlin.ui.basket
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -24,6 +25,7 @@ class BasketFragment : Fragment() {
         return binding.root
     }
 
+    @SuppressLint("StringFormatMatches")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         val currentUser = FirebaseAuth.getInstance().currentUser
 
@@ -53,7 +55,7 @@ class BasketFragment : Fragment() {
         }
 
         viewModel.cartSum.observe(viewLifecycleOwner) { sum ->
-            binding.sumView.text = String.format("%.2f zł", sum)
+            binding.sumView.text = context?.getString(R.string.sum_price, sum)
         }
 
         viewModel.uiState.observe(viewLifecycleOwner) { state ->

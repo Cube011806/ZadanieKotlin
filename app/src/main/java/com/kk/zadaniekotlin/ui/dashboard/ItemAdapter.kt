@@ -43,7 +43,7 @@ class ItemAdapter(
         )
 
         holder.itemTitle.text = item.title
-        holder.itemPrice.text = "${item.price} zł"
+        holder.itemPrice.text = holder.itemView.context.getString(R.string.item_price, item.price)
 
         Glide.with(holder.itemView.context)
             .load(item.imageUrl)

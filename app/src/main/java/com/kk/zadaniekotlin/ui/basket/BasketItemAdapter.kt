@@ -1,5 +1,6 @@
 package com.kk.zadaniekotlin.ui.basket
 
+import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -33,10 +34,11 @@ class BasketItemAdapter(
         return BasketViewHolder(view)
     }
 
+    @SuppressLint("StringFormatMatches")
     override fun onBindViewHolder(holder: BasketViewHolder, position: Int) {
         val item = items[position]
         holder.itemTitle.text = item.title
-        holder.itemPrice.text = String.format("%.2f zł", item.price ?: 0.0)
+        holder.itemPrice.text = holder.itemView.context.getString(R.string.item_price, item.price)
 
         holder.removeButton.setOnClickListener {
             onRemoveFromCart(item)
