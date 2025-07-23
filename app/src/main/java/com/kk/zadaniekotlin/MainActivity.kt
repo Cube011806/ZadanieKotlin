@@ -1,6 +1,5 @@
 package com.kk.zadaniekotlin
 
-import SharedViewModel
 import android.content.Intent
 import android.os.Bundle
 import android.view.Menu

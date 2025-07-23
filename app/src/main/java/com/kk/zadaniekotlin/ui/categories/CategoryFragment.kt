@@ -1,6 +1,6 @@
 package com.kk.zadaniekotlin.ui.categories
 
-import SharedViewModel
+import com.kk.zadaniekotlin.SharedViewModel
 import android.app.AlertDialog
 import android.os.Bundle
 import android.view.LayoutInflater

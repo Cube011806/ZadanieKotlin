@@ -1,6 +1,6 @@
 package com.kk.zadaniekotlin.ui.dashboard
 
-import SharedViewModel
+import com.kk.zadaniekotlin.SharedViewModel
 import com.kk.zadaniekotlin.model.Item
 import ItemAdapter
 import android.os.Bundle
