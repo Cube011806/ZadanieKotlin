@@ -5,8 +5,9 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.google.firebase.auth.FirebaseAuth
+import javax.inject.Inject
 
-class MainViewModel(application: Application) : AndroidViewModel(application) {
+class MainViewModel @Inject constructor(application: Application) : AndroidViewModel(application) {
 
     private val _isUserLoggedIn = MutableLiveData<Boolean>()
     val isUserLoggedIn: LiveData<Boolean> get() = _isUserLoggedIn

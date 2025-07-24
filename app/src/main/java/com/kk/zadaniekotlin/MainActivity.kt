@@ -13,6 +13,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
@@ -20,14 +21,17 @@ import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.firebase.FirebaseApp
 import com.kk.zadaniekotlin.databinding.ActivityMainBinding
-import com.kk.zadaniekotlin.MainViewModel
 import com.kk.zadaniekotlin.ui.basket.BasketViewModel
 import java.util.Locale
+import javax.inject.Inject
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
-    private val mainViewModel: MainViewModel by viewModels()
+    @Inject
+    lateinit var viewModelFactory: ViewModelProvider.Factory
+
+    lateinit var mainViewModel: MainViewModel
     private val basketViewModel: BasketViewModel by viewModels()
 
     private val loginLauncher =
@@ -46,6 +50,8 @@ class MainActivity : AppCompatActivity() {
         FirebaseApp.initializeApp(this)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        (application as MyApplication).appComponent.inject(this)
+        mainViewModel = ViewModelProvider(this, viewModelFactory).get(MainViewModel::class.java)
 
         val navController = findNavController(R.id.nav_host_fragment_activity_main)
         val navView: BottomNavigationView = binding.navView
@@ -75,7 +81,6 @@ class MainActivity : AppCompatActivity() {
     private fun observeViewModel(navController: androidx.navigation.NavController, navView: BottomNavigationView) {
         mainViewModel.isUserLoggedIn.observe(this) { loggedIn ->
             invalidateOptionsMenu()
-            supportActionBar?.title = if (loggedIn) "Witaj!" else getString(R.string.app_name)
             if (loggedIn) basketViewModel.loadCartFromFirebase()
         }
 
