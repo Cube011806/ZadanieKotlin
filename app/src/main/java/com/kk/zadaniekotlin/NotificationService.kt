@@ -8,28 +8,27 @@ import android.content.Intent
 import android.os.IBinder
 import android.util.Log
 import androidx.core.app.NotificationCompat
+import com.kk.zadaniekotlin.R
+import com.kk.zadaniekotlin.ui.basket.BasketReceiver
 
 class NotificationService : Service() {
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         createNotificationChannel()
+        val activityIntent = Intent(this, MainActivity::class.java)
+        activityIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
+        activityIntent.putExtra("openBasket", true)
 
-        val actionIntent = Intent("com.kk.ACTION_OPEN_BASKET")
-        val pendingIntent = PendingIntent.getBroadcast(
-            this,
-            0,
-            actionIntent,
-            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
-        )
+        val pendingIntent = PendingIntent.getActivity(this, 0, activityIntent, PendingIntent.FLAG_IMMUTABLE)
 
         val notification = NotificationCompat.Builder(this, "basket_channel")
-            .setContentTitle("Dodano produkt do koszyka")
-            .setContentText("Kliknij, aby zobaczyć produkty w koszyku")
+            .setContentTitle("Koszyk")
+            .setContentText("Kliknij, aby zobaczyć koszyk")
             .setSmallIcon(R.drawable.shopping_cart)
             .setContentIntent(pendingIntent)
             .setPriority(NotificationCompat.PRIORITY_HIGH)
             .build()
-        Log.d("NotificationService", "Notification wysłane")
+
         startForeground(1, notification)
 
         return START_NOT_STICKY
@@ -46,5 +45,4 @@ class NotificationService : Service() {
         val manager = getSystemService(NotificationManager::class.java)
         manager.createNotificationChannel(channel)
     }
-
 }
