@@ -39,12 +39,6 @@
         <action
             android:id="@+id/action_categoryFragment_to_dashboardFragment"
             app:destination="@id/navigation_dashboard">
-<!--            <argument-->
-<!--                android:name="categoryId"-->
-<!--                app:argType="integer" />-->
-<!--            <argument-->
-<!--                android:name="subCatId"-->
-<!--                app:argType="integer" />-->
         </action>
         <argument
             android:name="categoryId"

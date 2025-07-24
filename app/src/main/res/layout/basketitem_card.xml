@@ -31,7 +31,7 @@
             android:ellipsize="end"
             android:text="Kurtka damska MERIDA beżowa DStreet"
             android:textAlignment="viewStart"
-            android:textColor="@android:color/black"
+            android:textColor="@color/itemPriceColor"
             android:textSize="12sp" />
 
         <TextView
@@ -44,7 +44,7 @@
             android:layout_marginTop="75dp"
             android:text="189,99 zł"
             android:textAlignment="center"
-            android:textColor="@android:color/black"
+            android:textColor="@color/itemPriceColor"
             android:textSize="18sp" />
 
         <ImageButton
