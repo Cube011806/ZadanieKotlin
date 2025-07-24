@@ -1,14 +1,10 @@
 package com.kk.zadaniekotlin
 
-import android.app.NotificationChannel
-import android.app.NotificationManager
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
-import android.widget.ImageButton
 import android.widget.PopupMenu
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
@@ -23,27 +19,24 @@ import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.firebase.FirebaseApp
-import com.google.firebase.auth.FirebaseAuth
 import com.kk.zadaniekotlin.databinding.ActivityMainBinding
+import com.kk.zadaniekotlin.MainViewModel
 import com.kk.zadaniekotlin.ui.basket.BasketViewModel
 import java.util.Locale
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
-    private val sharedViewModel: SharedViewModel by viewModels()
+    private val mainViewModel: MainViewModel by viewModels()
     private val basketViewModel: BasketViewModel by viewModels()
-    private var isUserLoggedIn: Boolean = false
 
     private val loginLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == RESULT_OK) {
                 val loggedIn = result.data?.getBooleanExtra("isLoggedIn", false) ?: false
-                if (loggedIn || FirebaseAuth.getInstance().currentUser != null) {
-                    isUserLoggedIn = true
+                if (loggedIn) {
+                    mainViewModel.loginSuccess()
                     basketViewModel.loadCartFromFirebase()
-                    invalidateOptionsMenu()
-                    supportActionBar?.title = "Witaj!"
                 }
             }
         }
@@ -54,23 +47,22 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        val openBasket = intent?.getBooleanExtra("openBasket", false) ?: false
-        if (openBasket) {
-            findNavController(R.id.nav_host_fragment_activity_main).navigate(R.id.navigation_basket)
-        }
-
-        isUserLoggedIn = FirebaseAuth.getInstance().currentUser != null
-
-        if (isUserLoggedIn) {
-            basketViewModel.loadCartFromFirebase()
-        }
-        if (intent?.getStringExtra("navigateTo") == "basket") {
-            findNavController(R.id.nav_host_fragment_activity_main).navigate(R.id.navigation_basket)
-        }
-
         val navController = findNavController(R.id.nav_host_fragment_activity_main)
         val navView: BottomNavigationView = binding.navView
 
+        setupActionBar(navController)
+
+        observeViewModel(navController, navView)
+
+        handleIntent(intent)
+
+        navView.setupWithNavController(navController)
+        setupBottomNavigation(navView, navController)
+
+        invalidateOptionsMenu()
+    }
+
+    private fun setupActionBar(navController: androidx.navigation.NavController) {
         setSupportActionBar(findViewById(R.id.topBar))
         val appBarConfiguration = AppBarConfiguration(setOf(R.id.navigation_home))
         setupActionBarWithNavController(navController, appBarConfiguration)
@@ -78,30 +70,45 @@ class MainActivity : AppCompatActivity() {
         val drawable = ContextCompat.getDrawable(this, R.drawable.arrow_back_24px)
         drawable?.setTint(ContextCompat.getColor(this, android.R.color.white))
         supportActionBar?.setHomeAsUpIndicator(drawable)
+    }
 
-        val badge = navView.getOrCreateBadge(R.id.navigation_basket)
-        badge.number = basketViewModel.cartItems.value?.size ?: 0
-        badge.isVisible = true
+    private fun observeViewModel(navController: androidx.navigation.NavController, navView: BottomNavigationView) {
+        mainViewModel.isUserLoggedIn.observe(this) { loggedIn ->
+            invalidateOptionsMenu()
+            supportActionBar?.title = if (loggedIn) "Witaj!" else getString(R.string.app_name)
+            if (loggedIn) basketViewModel.loadCartFromFirebase()
+        }
+
+        mainViewModel.navigateToBasket.observe(this) { navigate ->
+            if (navigate) {
+                navController.navigate(R.id.navigation_basket)
+                mainViewModel.clearBasketNavigationFlag()
+            }
+        }
 
         basketViewModel.cartItems.observe(this) { items ->
             val badge = navView.getOrCreateBadge(R.id.navigation_basket)
             badge.number = items.size
             badge.isVisible = items.isNotEmpty()
         }
+    }
 
-        navView.setupWithNavController(navController)
+    private fun handleIntent(intent: Intent?) {
+        if (intent?.getBooleanExtra("openBasket", false) == true ||
+            intent?.getStringExtra("navigateTo") == "basket") {
+            mainViewModel.triggerBasketNavigation()
+        }
+    }
 
+    private fun setupBottomNavigation(navView: BottomNavigationView, navController: androidx.navigation.NavController) {
         navView.setOnItemSelectedListener { item ->
             when (item.itemId) {
                 R.id.navigation_dashboard -> {
-                    sharedViewModel.setCatId(0)
-                    sharedViewModel.setSubCatId(0)
                     navController.navigate(item.itemId)
                     true
                 }
                 R.id.navigation_more -> {
-                    val itemView = navView.findViewById<View>(R.id.navigation_more)
-                    showMoreMenu(itemView)
+                    showMoreMenu(navView.findViewById(R.id.navigation_more))
                     true
                 }
                 else -> {
@@ -110,22 +117,18 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }
-
-        invalidateOptionsMenu()
     }
 
     override fun onResume() {
         super.onResume()
-        val currentUser = FirebaseAuth.getInstance().currentUser
-        if (currentUser != null) {
-            isUserLoggedIn = true
-            invalidateOptionsMenu()
+        if (mainViewModel.isUserAuthenticated()) {
+            mainViewModel.loginSuccess()
         }
     }
 
     override fun onPrepareOptionsMenu(menu: Menu?): Boolean {
-        menu?.findItem(R.id.action_login)?.isVisible = !isUserLoggedIn
-        menu?.findItem(R.id.menu_logout)?.isVisible = isUserLoggedIn
+        menu?.findItem(R.id.action_login)?.isVisible = !(mainViewModel.isUserLoggedIn.value ?: false)
+        menu?.findItem(R.id.menu_logout)?.isVisible = mainViewModel.isUserLoggedIn.value ?: false
         return super.onPrepareOptionsMenu(menu)
     }
 
@@ -133,6 +136,7 @@ class MainActivity : AppCompatActivity() {
         menuInflater.inflate(R.menu.top_menu, menu)
         return true
     }
+
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.action_login -> {
@@ -140,12 +144,8 @@ class MainActivity : AppCompatActivity() {
                 true
             }
             R.id.action_switch_mode -> {
-                val currentMode = AppCompatDelegate.getDefaultNightMode()
-                val newMode = if (currentMode == AppCompatDelegate.MODE_NIGHT_YES) {
-                    AppCompatDelegate.MODE_NIGHT_NO
-                } else {
-                    AppCompatDelegate.MODE_NIGHT_YES
-                }
+                val newMode = if (AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_YES)
+                    AppCompatDelegate.MODE_NIGHT_NO else AppCompatDelegate.MODE_NIGHT_YES
                 AppCompatDelegate.setDefaultNightMode(newMode)
                 recreate()
                 true
@@ -162,18 +162,15 @@ class MainActivity : AppCompatActivity() {
         val popup = PopupMenu(this, anchorView)
         popup.menuInflater.inflate(R.menu.more_menu, popup.menu)
 
-        val currentUser = FirebaseAuth.getInstance().currentUser
-        if (currentUser == null) {
-            popup.menu.findItem(R.id.menu_logout)?.isVisible = false
-        }
+        popup.menu.findItem(R.id.menu_logout)?.isVisible = mainViewModel.isUserAuthenticated()
 
-        popup.setOnMenuItemClickListener { menuItem ->
-            when (menuItem.itemId) {
+        popup.setOnMenuItemClickListener { item ->
+            when (item.itemId) {
                 R.id.menu_change_language -> {
                     val languages = resources.getStringArray(R.array.language_options)
                     AlertDialog.Builder(this)
                         .setTitle("Wybierz język")
-                        .setItems(languages) { dialog, which ->
+                        .setItems(languages) { _, which ->
                             val selected = languages[which]
                             when (selected) {
                                 "Polski" -> setAppLocale("pl")
@@ -186,12 +183,8 @@ class MainActivity : AppCompatActivity() {
                 }
 
                 R.id.menu_logout -> {
-                    FirebaseAuth.getInstance().signOut()
-                    invalidateOptionsMenu()
-                    isUserLoggedIn = false
-
-                    val navView = binding.navView
-                    val badge = navView.getBadge(R.id.navigation_basket)
+                    mainViewModel.logout()
+                    val badge = binding.navView.getBadge(R.id.navigation_basket)
                     badge?.isVisible = false
                     badge?.clearNumber()
 
@@ -200,7 +193,6 @@ class MainActivity : AppCompatActivity() {
                     navController.navigate(R.id.navigation_home)
 
                     Toast.makeText(this, "Wylogowano", Toast.LENGTH_SHORT).show()
-                    onPrepareOptionsMenu(binding.topBar.menu)
                     true
                 }
 
@@ -212,10 +204,9 @@ class MainActivity : AppCompatActivity() {
 
     override fun onSupportNavigateUp(): Boolean {
         val navController = findNavController(R.id.nav_host_fragment_activity_main)
-        sharedViewModel.setCatId(0)
-        sharedViewModel.setSubCatId(0)
         return navController.navigateUp() || super.onSupportNavigateUp()
     }
+
     private fun setAppLocale(language: String) {
         val config = resources.configuration
         val locale = Locale(language)
@@ -224,5 +215,4 @@ class MainActivity : AppCompatActivity() {
         resources.updateConfiguration(config, resources.displayMetrics)
         recreate()
     }
-
 }
