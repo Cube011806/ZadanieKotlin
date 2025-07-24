@@ -1,31 +1,41 @@
 package com.kk.zadaniekotlin.ui.basket
 
-import android.annotation.SuppressLint
+import android.content.Context
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
-import androidx.fragment.app.Fragment
-import androidx.fragment.app.activityViewModels
+import android.view.*
+import androidx.fragment.app.*
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
 import com.google.firebase.auth.FirebaseAuth
+import com.kk.zadaniekotlin.MyApplication
 import com.kk.zadaniekotlin.R
 import com.kk.zadaniekotlin.databinding.FragmentBasketBinding
+import javax.inject.Inject
 
 class BasketFragment : Fragment() {
+
+    @Inject
+    lateinit var viewModelFactory: ViewModelProvider.Factory
 
     private var _binding: FragmentBasketBinding? = null
     private val binding get() = _binding!!
 
-    private val viewModel: BasketViewModel by activityViewModels()
+    private val basketViewModel: BasketViewModel by activityViewModels {
+        viewModelFactory
+    }
+
     private lateinit var adapter: BasketItemAdapter
+
+    override fun onAttach(context: Context) {
+        (requireActivity().application as MyApplication).appComponent.inject(this)
+        super.onAttach(context)
+    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentBasketBinding.inflate(inflater, container, false)
         return binding.root
     }
 
-    @SuppressLint("StringFormatMatches")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         val currentUser = FirebaseAuth.getInstance().currentUser
 
@@ -41,32 +51,32 @@ class BasketFragment : Fragment() {
         }
 
         adapter = BasketItemAdapter(mutableListOf()) { item ->
-            viewModel.removeItem(item)
-            viewModel.saveCartToFirebase()
+            basketViewModel.removeItem(item)
+            basketViewModel.saveCartToFirebase()
         }
 
         binding.recyclerView.layoutManager = GridLayoutManager(requireContext(), 1)
         binding.recyclerView.adapter = adapter
 
-        viewModel.cartItems.observe(viewLifecycleOwner) { items ->
+        basketViewModel.cartItems.observe(viewLifecycleOwner) { items ->
             adapter.updateData(items)
             binding.emptyTextView.visibility = if (items.isEmpty()) View.VISIBLE else View.GONE
             binding.recyclerView.visibility = if (items.isNotEmpty()) View.VISIBLE else View.GONE
         }
 
-        viewModel.cartSum.observe(viewLifecycleOwner) { sum ->
+        basketViewModel.cartSum.observe(viewLifecycleOwner) { sum ->
             binding.sumView.text = context?.getString(R.string.sum_price, sum)
         }
 
-        viewModel.uiState.observe(viewLifecycleOwner) { state ->
+        basketViewModel.uiState.observe(viewLifecycleOwner) { state ->
             binding.progressBar.visibility = if (state is BasketUiState.Loading) View.VISIBLE else View.GONE
         }
 
-        viewModel.cartItems.observe(viewLifecycleOwner) {
-            viewModel.saveCartToFirebase()
+        basketViewModel.cartItems.observe(viewLifecycleOwner) {
+            basketViewModel.saveCartToFirebase()
         }
 
-        viewModel.loadCartFromFirebase()
+        basketViewModel.loadCartFromFirebase()
     }
 
     override fun onDestroyView() {

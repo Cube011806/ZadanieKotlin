@@ -1,29 +1,49 @@
 package com.kk.zadaniekotlin.ui.dashboard
 
-import com.kk.zadaniekotlin.SharedViewModel
-import com.kk.zadaniekotlin.model.Item
 import ItemAdapter
+import android.content.Context
 import android.os.Bundle
 import android.view.*
 import android.widget.Toast
-import androidx.fragment.app.Fragment
-import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.*
+import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
+import com.kk.zadaniekotlin.MyApplication
+import com.kk.zadaniekotlin.R
+import com.kk.zadaniekotlin.SharedViewModel
 import com.kk.zadaniekotlin.databinding.FragmentDashboardBinding
+import com.kk.zadaniekotlin.model.Item
 import com.kk.zadaniekotlin.ui.basket.BasketViewModel
-import com.kk.zadaniekotlin.ui.dashboardimport.DashboardUiState
-import com.kk.zadaniekotlin.ui.dashboardimport.DashboardViewModel
+import com.kk.zadaniekotlin.ui.dashboardimport.*
+import javax.inject.Inject
 
 class DashboardFragment : Fragment() {
+
+    @Inject
+    lateinit var viewModelFactory: ViewModelProvider.Factory
 
     private var _binding: FragmentDashboardBinding? = null
     private val binding get() = _binding!!
 
-    private val viewModel: DashboardViewModel by activityViewModels()
-    private val sharedViewModel: SharedViewModel by activityViewModels()
-    private val basketViewModel: BasketViewModel by activityViewModels()
+    private val dashboardViewModel: DashboardViewModel by viewModels {
+        DashboardViewModelFactory()
+    }
+
+    private val sharedViewModel: SharedViewModel by activityViewModels {
+        viewModelFactory
+    }
+
+    private val basketViewModel: BasketViewModel by activityViewModels {
+        viewModelFactory
+    }
 
     private lateinit var adapter: ItemAdapter
+
+    override fun onAttach(context: Context) {
+        (requireActivity().application as MyApplication).appComponent.inject(this)
+        super.onAttach(context)
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -38,7 +58,7 @@ class DashboardFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         adapter = ItemAdapter(mutableListOf(), basketViewModel) { item ->
-            basketViewModel.addItem(item)
+            basketViewModel.addItem(item, requireContext())
         }
 
         binding.recyclerView.layoutManager = GridLayoutManager(requireContext(), 2)
@@ -46,9 +66,9 @@ class DashboardFragment : Fragment() {
 
         val catId = sharedViewModel.catId.value ?: 0
         val subCatId = sharedViewModel.subCatId.value ?: 0
-        viewModel.loadItems(catId, subCatId)
+        dashboardViewModel.loadItems(catId, subCatId)
 
-        viewModel.uiState.observe(viewLifecycleOwner) { state ->
+        dashboardViewModel.uiState.observe(viewLifecycleOwner) { state ->
             when (state) {
                 is DashboardUiState.Loading -> {
                     binding.progressBar.visibility = View.VISIBLE

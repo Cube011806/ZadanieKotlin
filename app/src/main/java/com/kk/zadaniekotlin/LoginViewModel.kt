@@ -4,8 +4,9 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.google.firebase.auth.FirebaseAuth
+import javax.inject.Inject
 
-class LoginViewModel : ViewModel() {
+class LoginViewModel @Inject constructor(): ViewModel() {
 
     private val auth = FirebaseAuth.getInstance()
     private val _authState = MutableLiveData<AuthState>()

@@ -1,13 +1,16 @@
 package com.kk.zadaniekotlin.ui.basket
 
+import android.content.Context
+import android.content.Intent
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
 import com.kk.zadaniekotlin.model.Item
+import javax.inject.Inject
 
-class BasketViewModel : ViewModel() {
+class BasketViewModel @Inject constructor(): ViewModel() {
 
     private val _cartItems = MutableLiveData<List<Item>>(emptyList())
     val cartItems: LiveData<List<Item>> get() = _cartItems
@@ -18,13 +21,21 @@ class BasketViewModel : ViewModel() {
     private val _uiState = MutableLiveData<BasketUiState>()
     val uiState: LiveData<BasketUiState> get() = _uiState
 
-    fun addItem(item: Item) {
+    fun notifyItemAdded(context: Context, item: Item) {
+        val intent = Intent("com.kk.zadaniekotlin.ACTION_ITEM_ADDED").apply {
+            putExtra("itemName", item.title)
+        }
+        context.sendBroadcast(intent)
+    }
+
+    fun addItem(item: Item, context: Context) {
         val updated = _cartItems.value?.toMutableList() ?: mutableListOf()
         updated.add(item)
         _cartItems.value = updated
         _cartSum.value = updated.sumOf { it.price ?: 0.0 }
         saveCartToFirebase()
     }
+
 
     fun removeItem(item: Item) {
         val updated = _cartItems.value?.toMutableList() ?: mutableListOf()

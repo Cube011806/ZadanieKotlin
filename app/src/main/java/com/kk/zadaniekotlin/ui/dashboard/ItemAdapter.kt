@@ -1,3 +1,4 @@
+import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.view.LayoutInflater
@@ -6,10 +7,12 @@ import android.view.ViewGroup
 import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.google.firebase.auth.FirebaseAuth
+import com.kk.zadaniekotlin.NotificationService
 import com.kk.zadaniekotlin.R
 import com.kk.zadaniekotlin.model.Item
 import com.kk.zadaniekotlin.ui.basket.BasketViewModel
@@ -57,6 +60,11 @@ class ItemAdapter(
         holder.itemButton.setOnClickListener {
                 onAddToCart(item)
                 holder.itemButton.setImageResource(R.drawable.shopping_cart)
+                ContextCompat.startForegroundService(
+                    holder.itemView.context,
+                    Intent(holder.itemView.context, NotificationService::class.java)
+                )
+
         }
     }
 
