@@ -1,6 +1,5 @@
 package com.kk.zadaniekotlin.ui.categories
 
-import SharedViewModel
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.view.LayoutInflater
@@ -13,8 +12,11 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.kk.zadaniekotlin.model.Category
 import com.kk.zadaniekotlin.R
+import com.kk.zadaniekotlin.SharedViewModel
+
 class CategoryAdapter(private val categories: List<Category>,
-                      private val sharedViewModel: SharedViewModel) :
+                      private val sharedViewModel: SharedViewModel
+) :
     RecyclerView.Adapter<CategoryAdapter.CategoryViewHolder>() {
 
     inner class CategoryViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {

@@ -1,6 +1,7 @@
 package com.kk.zadaniekotlin.ui.home
 
-import SharedViewModel
+import com.kk.zadaniekotlin.SharedViewModel
+import android.content.Context
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
@@ -11,18 +12,30 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import com.kk.zadaniekotlin.HomeUiState
 import com.kk.zadaniekotlin.HomeViewModel
+import com.kk.zadaniekotlin.HomeViewModelFactory
+import com.kk.zadaniekotlin.MyApplication
 import com.kk.zadaniekotlin.databinding.FragmentHomeBinding
+import javax.inject.Inject
 
 class HomeFragment : Fragment() {
     private var _binding: FragmentHomeBinding? = null
     private val binding get() = _binding!!
+    private val homeViewModel: HomeViewModel by viewModels {
+        HomeViewModelFactory()
+    }
 
-    private val homeViewModel: HomeViewModel by viewModels()
-    private val sharedViewModel: SharedViewModel by activityViewModels()
+    @Inject
+    lateinit var viewModelFactory: ViewModelProvider.Factory
+
+    private val sharedViewModel: SharedViewModel by activityViewModels {
+        viewModelFactory
+    }
+
 
     private val buttons by lazy {
         listOf(
@@ -89,7 +102,10 @@ class HomeFragment : Fragment() {
             }
         }
     }
-
+    override fun onAttach(context: Context) {
+        (requireActivity().application as MyApplication).appComponent.inject(this)
+        super.onAttach(context)
+    }
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null

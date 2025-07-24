@@ -9,9 +9,10 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
-import javax.inject.Inject
 
-class HomeViewModel @Inject constructor(private val savedStateHandle: SavedStateHandle) : ViewModel() {
+class HomeViewModel(
+    private val savedStateHandle: SavedStateHandle
+) : ViewModel() {
 
     companion object {
         private const val KEY_IMAGE_URLS = "imageUrls"
@@ -25,11 +26,8 @@ class HomeViewModel @Inject constructor(private val savedStateHandle: SavedState
     init {
         val cachedUrls = savedStateHandle.get<List<String>>(KEY_IMAGE_URLS)
         if (cachedUrls != null) {
-            _uiState.value = if (cachedUrls.isEmpty()) {
-                HomeUiState.Empty
-            } else {
-                HomeUiState.Success(cachedUrls)
-            }
+            _uiState.value = if (cachedUrls.isEmpty()) HomeUiState.Empty
+            else HomeUiState.Success(cachedUrls)
         } else {
             loadImageUrls()
         }
@@ -37,23 +35,13 @@ class HomeViewModel @Inject constructor(private val savedStateHandle: SavedState
 
     fun loadImageUrls() {
         _uiState.value = HomeUiState.Loading
-
         val urlRef = FirebaseDatabase.getInstance().getReference("imageUrls")
         urlRef.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
-                val urls = mutableListOf<String>()
-                for (child in snapshot.children) {
-                    val url = child.getValue(String::class.java)
-                    url?.let { urls.add(it) }
-                }
-
+                val urls = snapshot.children.mapNotNull { it.getValue(String::class.java) }
                 savedStateHandle[KEY_IMAGE_URLS] = urls
-
-                _uiState.value = if (urls.isEmpty()) {
-                    HomeUiState.Empty
-                } else {
-                    HomeUiState.Success(urls)
-                }
+                _uiState.value = if (urls.isEmpty()) HomeUiState.Empty
+                else HomeUiState.Success(urls)
             }
 
             override fun onCancelled(error: DatabaseError) {
@@ -71,6 +59,7 @@ class HomeViewModel @Inject constructor(private val savedStateHandle: SavedState
     fun getSelectedCategoryId(): Int = savedStateHandle[KEY_SELECTED_CATEGORY_ID] ?: 6
     fun getSelectedCategoryName(): String? = savedStateHandle[KEY_SELECTED_CATEGORY_NAME]
 }
+
 sealed class HomeUiState {
     data object Loading : HomeUiState()
     data class Success(val imageUrls: List<String>) : HomeUiState()

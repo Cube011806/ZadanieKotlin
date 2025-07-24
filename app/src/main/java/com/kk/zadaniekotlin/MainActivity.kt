@@ -1,6 +1,8 @@
 package com.kk.zadaniekotlin
 
-import SharedViewModel
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
@@ -51,10 +53,18 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        val openBasket = intent?.getBooleanExtra("openBasket", false) ?: false
+        if (openBasket) {
+            findNavController(R.id.nav_host_fragment_activity_main).navigate(R.id.navigation_basket)
+        }
+
         isUserLoggedIn = FirebaseAuth.getInstance().currentUser != null
 
         if (isUserLoggedIn) {
             basketViewModel.loadCartFromFirebase()
+        }
+        if (intent?.getStringExtra("navigateTo") == "basket") {
+            findNavController(R.id.nav_host_fragment_activity_main).navigate(R.id.navigation_basket)
         }
 
         val navController = findNavController(R.id.nav_host_fragment_activity_main)

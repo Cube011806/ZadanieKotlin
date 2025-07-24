@@ -3,7 +3,7 @@ plugins {
     alias(libs.plugins.kotlin.android)
     id("androidx.navigation.safeargs")
     id("com.google.gms.google-services")
-    id("org.jetbrains.kotlin.kapt")
+    kotlin("kapt")
 }
 android {
     namespace = "com.kk.zadaniekotlin"

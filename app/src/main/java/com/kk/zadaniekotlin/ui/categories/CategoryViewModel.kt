@@ -8,7 +8,7 @@ import com.kk.zadaniekotlin.model.Category
 import com.kk.zadaniekotlin.R
 import javax.inject.Inject
 
-class CategoryViewModel @Inject constructor(private val savedStateHandle: SavedStateHandle)  : ViewModel() {
+class CategoryViewModel(private val savedStateHandle: SavedStateHandle)  : ViewModel() {
 
     companion object {
         private const val KEY_ID = "categoryId"

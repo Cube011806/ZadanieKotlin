@@ -1,27 +1,38 @@
 package com.kk.zadaniekotlin.ui.categories
 
-import SharedViewModel
 import android.app.AlertDialog
+import android.content.Context
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
+import com.kk.zadaniekotlin.MyApplication
 import com.kk.zadaniekotlin.R
+import com.kk.zadaniekotlin.SharedViewModel
 import com.kk.zadaniekotlin.databinding.FragmentCategoryBinding
+import javax.inject.Inject
 
 class CategoryFragment : Fragment() {
+
+    @Inject
+    lateinit var viewModelFactory: ViewModelProvider.Factory
 
     private var _binding: FragmentCategoryBinding? = null
     private val binding get() = _binding!!
 
-    private val viewModel: CategoryViewModel by viewModels()
-    private val sharedViewModel: SharedViewModel by activityViewModels()
+    private val viewModel: CategoryViewModel by viewModels {
+        CategoryViewModelFactory()
+    }
+
+    private val sharedViewModel: SharedViewModel by activityViewModels {
+        viewModelFactory
+    }
+
     private lateinit var adapter: CategoryAdapter
 
     private val categoryIdToName = mapOf(
@@ -33,6 +44,11 @@ class CategoryFragment : Fragment() {
         0 to "Wszystkie"
     )
     private val categoryNameToId = categoryIdToName.entries.associate { (id, name) -> name to id }
+
+    override fun onAttach(context: Context) {
+        (requireActivity().application as MyApplication).appComponent.inject(this)
+        super.onAttach(context)
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -94,15 +110,12 @@ class CategoryFragment : Fragment() {
             val categories = categoryNameToId.keys.toList()
             val selectedIndex = categories.indexOf(viewModel.getCurrentCategoryName() ?: "Wszystkie")
             var tempSelection = selectedIndex
-            val cat = getString(R.string.filter_chooseCat)
-            val confirmBut = getString(R.string.filter_confirm)
-            val cancelBut = getString(R.string.filter_cancel)
             AlertDialog.Builder(requireContext())
-                .setTitle(cat)
+                .setTitle(getString(R.string.filter_chooseCat))
                 .setSingleChoiceItems(categories.toTypedArray(), selectedIndex) { _, which ->
                     tempSelection = which
                 }
-                .setPositiveButton(confirmBut) { _, _ ->
+                .setPositiveButton(getString(R.string.filter_confirm)) { _, _ ->
                     val selectedName = categories[tempSelection]
                     val selectedId = categoryNameToId[selectedName] ?: return@setPositiveButton
 
@@ -116,7 +129,7 @@ class CategoryFragment : Fragment() {
                         viewModel.loadCategories(selectedId)
                     }
                 }
-                .setNegativeButton(cancelBut, null)
+                .setNegativeButton(getString(R.string.filter_cancel), null)
                 .show()
         }
 

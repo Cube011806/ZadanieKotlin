@@ -8,16 +8,21 @@ import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.textfield.TextInputLayout
+import javax.inject.Inject
 
 class LoginActivity : AppCompatActivity() {
+
+    @Inject
+    lateinit var viewModelFactory: ViewModelProvider.Factory
 
     private lateinit var loginViewModel: LoginViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        (application as MyApplication).appComponent.inject(this)
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
 
-        loginViewModel = ViewModelProvider(this)[LoginViewModel::class.java]
+        loginViewModel = ViewModelProvider(this, viewModelFactory)[LoginViewModel::class.java]
 
         val emailLayout = findViewById<TextInputLayout>(R.id.emailInputLayout)
         val passwordLayout = findViewById<TextInputLayout>(R.id.passwordInputLayout)
@@ -55,7 +60,7 @@ class LoginActivity : AppCompatActivity() {
         }
 
         registerButton.setOnClickListener {
-            val email = emailField.text.toString().trim()
+            /*val email = emailField.text.toString().trim()
             val password = passwordField.text.toString()
 
             val isEmailValid = email.isNotEmpty()
@@ -66,7 +71,12 @@ class LoginActivity : AppCompatActivity() {
 
             if (isEmailValid && isPasswordValid) {
                 loginViewModel.register(email, password)
-            }
+            }*/
+
+            val intent = Intent(this, RegisterActivity::class.java)
+            startActivity(intent)
+
+
         }
 
         backButton.setOnClickListener {
