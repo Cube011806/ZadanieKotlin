@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="itemPriceColor">#FFFFFF</color>
+    <color name="bgColor">#000000</color>
+    <color name="loginColor">@color/white</color>
+    <color name="loginButtonsColor">#424242</color>
+</resources>

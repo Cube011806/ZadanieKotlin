@@ -8,12 +8,14 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import android.widget.ImageButton
 import android.widget.PopupMenu
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.content.ContextCompat
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
@@ -42,7 +44,6 @@ class MainActivity : AppCompatActivity() {
                     basketViewModel.loadCartFromFirebase()
                     invalidateOptionsMenu()
                     supportActionBar?.title = "Witaj!"
-                    Toast.makeText(this, "Logowanie zakończone!", Toast.LENGTH_SHORT).show()
                 }
             }
         }
@@ -132,11 +133,21 @@ class MainActivity : AppCompatActivity() {
         menuInflater.inflate(R.menu.top_menu, menu)
         return true
     }
-
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.action_login -> {
                 loginLauncher.launch(Intent(this, LoginActivity::class.java))
+                true
+            }
+            R.id.action_switch_mode -> {
+                val currentMode = AppCompatDelegate.getDefaultNightMode()
+                val newMode = if (currentMode == AppCompatDelegate.MODE_NIGHT_YES) {
+                    AppCompatDelegate.MODE_NIGHT_NO
+                } else {
+                    AppCompatDelegate.MODE_NIGHT_YES
+                }
+                AppCompatDelegate.setDefaultNightMode(newMode)
+                recreate()
                 true
             }
             android.R.id.home -> {

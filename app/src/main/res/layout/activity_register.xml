@@ -5,7 +5,7 @@ xmlns:app="http://schemas.android.com/apk/res-auto"
 xmlns:tools="http://schemas.android.com/tools"
 android:layout_width="match_parent"
 android:layout_height="match_parent"
-android:background="#ECEFF1"
+android:background="@color/bgColor"
 android:padding="16dp"
 tools:context=".LoginActivity">
 
@@ -26,7 +26,7 @@ tools:context=".LoginActivity">
             android:layout_height="wrap_content"
             android:text="@string/login_back"
             android:drawableStart="@drawable/arrow_back_24px"
-            android:backgroundTint="#757575"
+            android:backgroundTint="@color/loginButtonsColor"
             android:textColor="#FFFFFF"
             android:elevation="2dp"
             android:paddingStart="12dp"
@@ -46,7 +46,7 @@ tools:context=".LoginActivity">
         android:fontFamily="sans-serif-medium"
         android:text="@string/register_message"
         android:textAlignment="center"
-        android:textColor="@color/purple_500"
+        android:textColor="@color/loginColor"
         android:textSize="28sp"
         android:textStyle="bold" />
 
