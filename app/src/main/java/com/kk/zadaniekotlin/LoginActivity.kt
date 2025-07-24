@@ -60,7 +60,7 @@ class LoginActivity : AppCompatActivity() {
         }
 
         registerButton.setOnClickListener {
-            val email = emailField.text.toString().trim()
+            /*val email = emailField.text.toString().trim()
             val password = passwordField.text.toString()
 
             val isEmailValid = email.isNotEmpty()
@@ -71,7 +71,12 @@ class LoginActivity : AppCompatActivity() {
 
             if (isEmailValid && isPasswordValid) {
                 loginViewModel.register(email, password)
-            }
+            }*/
+
+            val intent = Intent(this, RegisterActivity::class.java)
+            startActivity(intent)
+
+
         }
 
         backButton.setOnClickListener {

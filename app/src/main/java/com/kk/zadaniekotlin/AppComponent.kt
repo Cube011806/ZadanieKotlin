@@ -15,6 +15,7 @@ interface AppComponent {
     fun inject(fragment: DashboardFragment)
     fun inject(fragment: BasketFragment)
     fun inject(activity: LoginActivity)
+    fun inject(activity: RegisterActivity)
 
 
 }

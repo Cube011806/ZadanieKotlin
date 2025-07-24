@@ -25,4 +25,6 @@
     <string name="login_password">Password</string>
     <string name="login_hintEmail">Email is required</string>
     <string name="login_hintPassword">Password is required</string>
+    <string name="register_message">Register</string>
+    <string name="confirm_password">Confirm Password</string>
 </resources>
