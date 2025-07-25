@@ -8,6 +8,7 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
@@ -29,41 +30,28 @@ class CategoryFragment : Fragment() {
         CategoryViewModelFactory()
     }
 
+
     private val sharedViewModel: SharedViewModel by activityViewModels {
         viewModelFactory
     }
 
     private lateinit var adapter: CategoryAdapter
 
-    private val categoryIdToName = mapOf(
-        1 to "Kobiety",
-        2 to "Mężczyźni",
-        3 to "Niemowlak",
-        4 to "Dziewczynka",
-        5 to "Chłopiec",
-        0 to "Wszystkie"
-    )
-    private val categoryNameToId = categoryIdToName.entries.associate { (id, name) -> name to id }
-
     override fun onAttach(context: Context) {
         (requireActivity().application as MyApplication).appComponent.inject(this)
         super.onAttach(context)
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentCategoryBinding.inflate(inflater, container, false)
 
-        adapter = CategoryAdapter(mutableListOf(), sharedViewModel)
+        adapter = CategoryAdapter(sharedViewModel)
         binding.recyclerView2.layoutManager = GridLayoutManager(requireContext(), 3)
         binding.recyclerView2.adapter = adapter
 
         val args = CategoryFragmentArgs.fromBundle(requireArguments())
         val initialId = args.categoryId
-        val initialName = categoryIdToName[initialId] ?: "Wszystkie"
+        val initialName = viewModel.categoryIdToName[initialId] ?: "Wszystkie"
 
         sharedViewModel.setCatId(initialId)
 
@@ -106,10 +94,18 @@ class CategoryFragment : Fragment() {
             }
         }
 
+        viewModel.navigateToDashboard.observe(viewLifecycleOwner, Observer { navigate ->
+            navigate?.let {
+                if (it) findNavController().navigate(R.id.navigation_dashboard)
+                viewModel.resetNavigationFlag()
+            }
+        })
+
         binding.button.setOnClickListener {
-            val categories = categoryNameToId.keys.toList()
+            val categories = viewModel.categoryNameToId.keys.toList()
             val selectedIndex = categories.indexOf(viewModel.getCurrentCategoryName() ?: "Wszystkie")
             var tempSelection = selectedIndex
+
             AlertDialog.Builder(requireContext())
                 .setTitle(getString(R.string.filter_chooseCat))
                 .setSingleChoiceItems(categories.toTypedArray(), selectedIndex) { _, which ->
@@ -117,17 +113,7 @@ class CategoryFragment : Fragment() {
                 }
                 .setPositiveButton(getString(R.string.filter_confirm)) { _, _ ->
                     val selectedName = categories[tempSelection]
-                    val selectedId = categoryNameToId[selectedName] ?: return@setPositiveButton
-
-                    sharedViewModel.setCatId(selectedId)
-
-                    if (selectedId == 0) {
-                        sharedViewModel.setSubCatId(0)
-                        findNavController().navigate(R.id.navigation_dashboard)
-                    } else {
-                        viewModel.setCurrentCategory(selectedId, selectedName)
-                        viewModel.loadCategories(selectedId)
-                    }
+                    viewModel.onCategorySelected(selectedName, sharedViewModel)
                 }
                 .setNegativeButton(getString(R.string.filter_cancel), null)
                 .show()

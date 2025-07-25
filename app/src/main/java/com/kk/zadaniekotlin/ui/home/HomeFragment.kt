@@ -77,7 +77,6 @@ class HomeFragment : Fragment() {
                 .into(button)
 
             button.setOnClickListener {
-                Toast.makeText(requireContext(), "Kliknięto: ${category.name}", Toast.LENGTH_SHORT).show()
                 homeViewModel.onCategoryClicked(category.id)
                 sharedViewModel.setCatId(category.id)
                 val action = HomeFragmentDirections.actionNavigationHomeToNavigationCategory(category.id)
