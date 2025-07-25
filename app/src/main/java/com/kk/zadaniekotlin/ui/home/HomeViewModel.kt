@@ -1,14 +1,8 @@
-package com.kk.zadaniekotlin
+package com.kk.zadaniekotlin.ui.home
 
 import android.util.Log
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.SavedStateHandle
-import androidx.lifecycle.ViewModel
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.database.ValueEventListener
+import androidx.lifecycle.*
+import com.google.firebase.database.*
 
 class HomeViewModel(
     private val savedStateHandle: SavedStateHandle
@@ -21,48 +15,69 @@ class HomeViewModel(
     }
 
     private val _uiState = MutableLiveData<HomeUiState>()
-    val uiState: LiveData<HomeUiState> get() = _uiState
+    val uiState: LiveData<HomeUiState> = _uiState
+
+    val categories = listOf(
+        1 to "Kobiety",
+        2 to "Mężczyzna",
+        3 to "Niemowlak",
+        4 to "Dziewczynka",
+        5 to "Chłopiec"
+    )
 
     init {
         val cachedUrls = savedStateHandle.get<List<String>>(KEY_IMAGE_URLS)
         if (cachedUrls != null) {
             _uiState.value = if (cachedUrls.isEmpty()) HomeUiState.Empty
-            else HomeUiState.Success(cachedUrls)
+            else HomeUiState.Success(getCategoryImages(cachedUrls))
         } else {
-            loadImageUrls()
+            fetchImageUrls()
         }
     }
 
-    fun loadImageUrls() {
+    private fun fetchImageUrls() {
         _uiState.value = HomeUiState.Loading
-        val urlRef = FirebaseDatabase.getInstance().getReference("imageUrls")
-        urlRef.addListenerForSingleValueEvent(object : ValueEventListener {
-            override fun onDataChange(snapshot: DataSnapshot) {
-                val urls = snapshot.children.mapNotNull { it.getValue(String::class.java) }
-                savedStateHandle[KEY_IMAGE_URLS] = urls
-                _uiState.value = if (urls.isEmpty()) HomeUiState.Empty
-                else HomeUiState.Success(urls)
-            }
 
-            override fun onCancelled(error: DatabaseError) {
-                Log.e("Firebase", "Błąd: ${error.message}")
-                _uiState.value = HomeUiState.Error(error.message ?: "Błąd ładowania danych")
-            }
-        })
+        FirebaseDatabase.getInstance().getReference("imageUrls")
+            .addListenerForSingleValueEvent(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    val urls = snapshot.children.mapNotNull { it.getValue(String::class.java) }
+                    savedStateHandle[KEY_IMAGE_URLS] = urls
+                    _uiState.value = if (urls.isEmpty()) HomeUiState.Empty
+                    else HomeUiState.Success(getCategoryImages(urls))
+                }
+
+                override fun onCancelled(error: DatabaseError) {
+                    Log.e("HomeViewModel", "Firebase Error: ${error.message}")
+                    _uiState.value = HomeUiState.Error(error.message)
+                }
+            })
     }
 
-    fun setSelectedCategory(id: Int, name: String) {
+    fun getCategoryImages(imageUrls: List<String>): List<CategoryImage> {
+        return categories.zip(imageUrls) { (id, name), url ->
+            CategoryImage(id, name, url)
+        }
+    }
+
+    fun onCategoryClicked(id: Int) {
+        val name = getCategoryNameById(id) ?: "Nieznana"
         savedStateHandle[KEY_SELECTED_CATEGORY_ID] = id
         savedStateHandle[KEY_SELECTED_CATEGORY_NAME] = name
     }
 
-    fun getSelectedCategoryId(): Int = savedStateHandle[KEY_SELECTED_CATEGORY_ID] ?: 6
-    fun getSelectedCategoryName(): String? = savedStateHandle[KEY_SELECTED_CATEGORY_NAME]
+    private fun getCategoryNameById(id: Int): String? = categories.find { it.first == id }?.second
 }
 
+data class CategoryImage(
+    val id: Int,
+    val name: String,
+    val imageUrl: String
+)
+
 sealed class HomeUiState {
-    data object Loading : HomeUiState()
-    data class Success(val imageUrls: List<String>) : HomeUiState()
-    data object Empty : HomeUiState()
+    object Loading : HomeUiState()
+    data class Success(val categoryImages: List<CategoryImage>) : HomeUiState()
+    object Empty : HomeUiState()
     data class Error(val message: String) : HomeUiState()
 }
