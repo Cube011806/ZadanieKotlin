@@ -1,6 +1,5 @@
 package com.kk.zadaniekotlin.ui.basket
 
-import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -8,18 +7,16 @@ import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.core.content.ContextCompat
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.bumptech.glide.load.engine.GlideException
-import com.bumptech.glide.request.RequestListener
-import com.bumptech.glide.request.target.Target
 import com.kk.zadaniekotlin.R
 import com.kk.zadaniekotlin.model.Item
 
 class BasketItemAdapter(
-    private val items: MutableList<Item>,
     private val onRemoveFromCart: (Item) -> Unit
-) : RecyclerView.Adapter<BasketItemAdapter.BasketViewHolder>() {
+) : ListAdapter<Item, BasketItemAdapter.BasketViewHolder>(ItemDiffCallback()) {
 
     inner class BasketViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val itemImage: ImageView = itemView.findViewById(R.id.basketItemImage)
@@ -29,14 +26,13 @@ class BasketItemAdapter(
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BasketViewHolder {
-        val view = LayoutInflater.from(parent.context)
-            .inflate(R.layout.basketitem_card, parent, false)
+        val view = LayoutInflater.from(parent.context).inflate(R.layout.basketitem_card, parent, false)
         return BasketViewHolder(view)
     }
 
-    @SuppressLint("StringFormatMatches")
     override fun onBindViewHolder(holder: BasketViewHolder, position: Int) {
-        val item = items[position]
+        val item = getItem(position)
+
         holder.itemTitle.text = item.title
         holder.itemPrice.text = holder.itemView.context.getString(R.string.item_price, item.price)
 
@@ -50,12 +46,12 @@ class BasketItemAdapter(
             .error(ContextCompat.getDrawable(holder.itemView.context, R.color.white))
             .into(holder.itemImage)
     }
+}
 
-    override fun getItemCount(): Int = items.size
+class ItemDiffCallback : DiffUtil.ItemCallback<Item>() {
+    override fun areItemsTheSame(oldItem: Item, newItem: Item): Boolean =
+        oldItem.catId == newItem.catId
 
-    fun updateData(newItems: List<Item>) {
-        items.clear()
-        items.addAll(newItems)
-        notifyDataSetChanged()
-    }
+    override fun areContentsTheSame(oldItem: Item, newItem: Item): Boolean =
+        oldItem == newItem
 }

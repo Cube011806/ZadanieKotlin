@@ -1,56 +1,50 @@
-package com.kk.zadaniekotlin.ui.dashboardimport
+package com.kk.zadaniekotlin.ui.dashboard
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import android.util.Log
-import androidx.lifecycle.SavedStateHandle
+import androidx.lifecycle.*
 import com.google.firebase.database.*
 import com.kk.zadaniekotlin.model.Item
-import javax.inject.Inject
 
-class DashboardViewModel(private val savedStateHandle: SavedStateHandle) : ViewModel() {
+class DashboardViewModel : ViewModel() {
 
     private val _items = MutableLiveData<List<Item>>()
-    val items: LiveData<List<Item>> = _items
+    val items: LiveData<List<Item>> get() = _items
 
     private val _uiState = MutableLiveData<DashboardUiState>()
     val uiState: LiveData<DashboardUiState> get() = _uiState
 
+    private val databaseRef = FirebaseDatabase.getInstance().getReference("items")
+
     fun loadItems(catId: Int, subCatId: Int) {
         _uiState.value = DashboardUiState.Loading
 
-        val ref = FirebaseDatabase.getInstance().getReference("items")
-        ref.addListenerForSingleValueEvent(object : ValueEventListener {
+        databaseRef.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
-                val allItems = snapshot.children
-                    .mapNotNull { it.getValue(Item::class.java) }
+                val allItems = snapshot.children.mapNotNull { it.getValue(Item::class.java) }
 
-                val filtered = if (catId != 0 && subCatId != 0) {
-                    allItems.filter { it.catId == catId && it.subCatId == subCatId }
-                } else {
-                    allItems
+                val filteredItems = allItems.filter { item ->
+                    (catId == 0 || item.catId == catId) &&
+                            (subCatId == 0 || item.subCatId == subCatId)
                 }
 
-                _items.value = filtered
+                _items.value = filteredItems
 
-                _uiState.value = if (filtered.isEmpty()) {
+                _uiState.value = if (filteredItems.isEmpty()) {
                     DashboardUiState.Empty
                 } else {
-                    DashboardUiState.Success(filtered)
+                    DashboardUiState.Success
                 }
             }
 
             override fun onCancelled(error: DatabaseError) {
-                Log.e("DashboardViewModel", "Błąd: ${error.message}")
                 _uiState.value = DashboardUiState.Error(Exception(error.message))
             }
         })
     }
 }
+
 sealed class DashboardUiState {
-    data object Loading : DashboardUiState()
-    data class Success(val items: List<Item>) : DashboardUiState()
-    data object Empty : DashboardUiState()
+    object Loading : DashboardUiState()
+    object Success : DashboardUiState()
+    object Empty : DashboardUiState()
     data class Error(val exception: Exception) : DashboardUiState()
 }

@@ -7,7 +7,7 @@ android:layout_width="match_parent"
 android:layout_height="match_parent"
 android:background="@color/bgColor"
 android:padding="16dp"
-tools:context=".LoginActivity">
+tools:context=".ui.login.LoginActivity">
 
 <LinearLayout
     android:layout_width="match_parent"
@@ -67,7 +67,7 @@ tools:context=".LoginActivity">
                 android:id="@+id/registerEmailLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Email">
+                android:hint="@string/email">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/registerEmail"

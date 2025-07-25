@@ -16,7 +16,7 @@
     <string name="cat_boy">Chłopiec</string>
     <string name="basket_descr">Ceny produktów:</string>
     <string name="basket_checkout">Przejdź do kasy</string>
-    <string name="item_price" translatable="false">%1$s zł</string>
+    <string name="item_price" translatable="false">%.2f zł</string>
     <string name="sum_price" translatable="false">%1$.2f zł</string>
     <string name="more_language">Zmień język</string>
     <string name="more_logout">Wyloguj się</string>
@@ -31,7 +31,9 @@
     <string name="login_password">Hasło</string>
     <string name="login_hintEmail">Email wymagany</string>
     <string name="login_hintPassword">Hasło wymagane</string>
-    <string name="title_activity_register">RegisterActivity</string>
+    <string name="title_activity_register" translatable="false">RegisterActivity</string>
     <string name="register_message">Zarejestruj się</string>
     <string name="confirm_password">Potwierdź hasło</string>
+    <string name="email">Email</string>
+    <string name="switch_theme">Zmień motyw</string>
 </resources>

@@ -20,9 +20,7 @@ class BasketFragment : Fragment() {
     private var _binding: FragmentBasketBinding? = null
     private val binding get() = _binding!!
 
-    private val basketViewModel: BasketViewModel by activityViewModels {
-        viewModelFactory
-    }
+    private val basketViewModel: BasketViewModel by activityViewModels { viewModelFactory }
 
     private lateinit var adapter: BasketItemAdapter
 
@@ -40,43 +38,51 @@ class BasketFragment : Fragment() {
         val currentUser = FirebaseAuth.getInstance().currentUser
 
         if (currentUser == null) {
-            binding.recyclerView.visibility = View.GONE
-            binding.emptyTextView.text = getString(R.string.basket_notLoggedIn)
-            binding.textView3.visibility = View.GONE
-            binding.emptyTextView.visibility = View.VISIBLE
-            binding.progressBar.visibility = View.GONE
-            binding.button2.visibility = View.GONE
-            binding.sumView.visibility = View.GONE
+            showNotLoggedInMessage()
             return
         }
 
-        adapter = BasketItemAdapter(mutableListOf()) { item ->
+        setupRecyclerView()
+        observeViewModel()
+
+        basketViewModel.loadCartFromFirebase()
+    }
+
+    private fun setupRecyclerView() {
+        adapter = BasketItemAdapter { item ->
             basketViewModel.removeItem(item)
-            basketViewModel.saveCartToFirebase()
         }
 
         binding.recyclerView.layoutManager = GridLayoutManager(requireContext(), 1)
         binding.recyclerView.adapter = adapter
+    }
 
+    private fun observeViewModel() {
         basketViewModel.cartItems.observe(viewLifecycleOwner) { items ->
-            adapter.updateData(items)
+            adapter.submitList(items)
             binding.emptyTextView.visibility = if (items.isEmpty()) View.VISIBLE else View.GONE
             binding.recyclerView.visibility = if (items.isNotEmpty()) View.VISIBLE else View.GONE
         }
 
         basketViewModel.cartSum.observe(viewLifecycleOwner) { sum ->
-            binding.sumView.text = context?.getString(R.string.sum_price, sum)
+            binding.sumView.text = getString(R.string.sum_price, sum)
         }
 
         basketViewModel.uiState.observe(viewLifecycleOwner) { state ->
             binding.progressBar.visibility = if (state is BasketUiState.Loading) View.VISIBLE else View.GONE
         }
+    }
 
-        basketViewModel.cartItems.observe(viewLifecycleOwner) {
-            basketViewModel.saveCartToFirebase()
+    private fun showNotLoggedInMessage() {
+        with(binding) {
+            recyclerView.visibility = View.GONE
+            emptyTextView.text = getString(R.string.basket_notLoggedIn)
+            emptyTextView.visibility = View.VISIBLE
+            textView3.visibility = View.GONE
+            progressBar.visibility = View.GONE
+            button2.visibility = View.GONE
+            sumView.visibility = View.GONE
         }
-
-        basketViewModel.loadCartFromFirebase()
     }
 
     override fun onDestroyView() {

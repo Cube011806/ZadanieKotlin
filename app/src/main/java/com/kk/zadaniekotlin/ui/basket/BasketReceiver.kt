@@ -1,10 +1,7 @@
 package com.kk.zadaniekotlin.ui.basket
-
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
-import android.util.Log
-import android.widget.Toast
 import com.kk.zadaniekotlin.MainActivity
 
 class BasketReceiver : BroadcastReceiver() {

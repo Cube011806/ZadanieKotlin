@@ -1,13 +1,16 @@
-package com.kk.zadaniekotlin
+package com.kk.zadaniekotlin.ui.login
 
 import android.content.Intent
 import android.os.Bundle
-import android.widget.*
+import android.widget.Button
+import android.widget.EditText
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.textfield.TextInputLayout
+import com.kk.zadaniekotlin.MyApplication
+import com.kk.zadaniekotlin.R
 import javax.inject.Inject
-
 class RegisterActivity : AppCompatActivity() {
 
     @Inject
@@ -37,22 +40,7 @@ class RegisterActivity : AppCompatActivity() {
             val email = emailField.text.toString().trim()
             val password = passwordField.text.toString()
             val confirmPassword = confirmPasswordField.text.toString()
-
-            val isEmailValid = email.isNotEmpty()
-            val isPasswordValid = password.length >= 6
-            val isPasswordMatch = password == confirmPassword
-
-            emailLayout.error = if (!isEmailValid) "Email wymagany" else null
-            passwordLayout.error = when {
-                !isPasswordValid -> "Minimum 6 znaków"
-                else -> null
-            }
-            confirmLayout.error = if (!isPasswordMatch) "Hasła nie są zgodne"
-            else if (!isPasswordValid) "Minimum 6 znaków" else null
-
-            if (isEmailValid && isPasswordValid && isPasswordMatch) {
-                loginViewModel.register(email, password)
-            }
+            loginViewModel.onRegisterFormSubmitted(email, password, confirmPassword)
         }
 
         backButton.setOnClickListener {
@@ -61,7 +49,6 @@ class RegisterActivity : AppCompatActivity() {
 
         loginViewModel.authState.observe(this) { state ->
             when (state) {
-                is AuthState.Loading -> { }
                 is AuthState.Registered -> {
                     Toast.makeText(this, "Zarejestrowano pomyślnie!", Toast.LENGTH_SHORT).show()
                     startActivity(Intent(this, LoginActivity::class.java))
@@ -72,6 +59,12 @@ class RegisterActivity : AppCompatActivity() {
                 }
                 else -> {}
             }
+        }
+
+        loginViewModel.formErrors.observe(this) { errors ->
+            emailLayout.error = errors.emailError
+            passwordLayout.error = errors.passwordError
+            confirmLayout.error = errors.confirmPasswordError
         }
     }
 }
