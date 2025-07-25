@@ -8,8 +8,8 @@
         app:showAsAction="always" />
     <item
         android:id="@+id/action_login"
-        android:title="Zaloguj się"
         android:icon="@drawable/logout_24px"
+        android:title="@string/login_message"
         app:showAsAction="always" />
 
 </menu>

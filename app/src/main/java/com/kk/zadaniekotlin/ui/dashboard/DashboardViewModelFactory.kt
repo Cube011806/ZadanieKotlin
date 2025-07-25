@@ -5,7 +5,7 @@ import androidx.lifecycle.viewmodel.CreationExtras
 
 class DashboardViewModelFactory : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>, extras: CreationExtras): T {
-        val handle = extras.createSavedStateHandle()
+        //val handle = extras.createSavedStateHandle()
         return DashboardViewModel() as T
     }
 }

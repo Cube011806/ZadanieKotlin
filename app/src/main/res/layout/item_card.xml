@@ -19,7 +19,6 @@
             android:layout_height="180dp"
             android:scaleType="centerCrop"
             android:src="@drawable/kurtka1" />
-
         <TextView
             android:id="@+id/itemTitle"
             android:layout_width="match_parent"
@@ -29,7 +28,7 @@
             android:ellipsize="middle"
             android:minLines="2"
             android:maxLines="2"
-            android:text="Kurtka damska MERIDA beżowa DStreet"
+            android:text=""
             android:textAlignment="viewStart"
             android:textColor="@color/itemPriceColor"
             android:textSize="12sp" />
@@ -42,10 +41,9 @@
             android:layout_alignParentStart="true"
             android:layout_marginStart="7dp"
             android:layout_marginTop="19dp"
-            android:text="189,99 zł"
+            android:text="@string/item_price"
             android:textColor="@color/itemPriceColor"
             android:textSize="18sp" />
-
         <ImageButton
             android:id="@+id/itemButton"
             android:layout_width="34dp"
@@ -56,6 +54,5 @@
             android:layout_marginEnd="-6dp"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:src="@drawable/add_shopping_cart_24" />
-
     </RelativeLayout>
 </androidx.cardview.widget.CardView>
