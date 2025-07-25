@@ -1,9 +1,12 @@
-package com.kk.zadaniekotlin
+package com.kk.zadaniekotlin.di
 
+import com.kk.zadaniekotlin.MainActivity
 import com.kk.zadaniekotlin.ui.basket.BasketFragment
 import com.kk.zadaniekotlin.ui.categories.CategoryFragment
 import com.kk.zadaniekotlin.ui.dashboard.DashboardFragment
 import com.kk.zadaniekotlin.ui.home.HomeFragment
+import com.kk.zadaniekotlin.ui.login.LoginActivity
+import com.kk.zadaniekotlin.ui.login.RegisterActivity
 import dagger.Component
 import javax.inject.Singleton
 
@@ -26,4 +29,3 @@ interface AppComponent {
 
 
 }
-

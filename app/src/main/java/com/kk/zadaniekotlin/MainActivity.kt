@@ -22,6 +22,7 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.firebase.FirebaseApp
 import com.kk.zadaniekotlin.databinding.ActivityMainBinding
 import com.kk.zadaniekotlin.ui.basket.BasketViewModel
+import com.kk.zadaniekotlin.ui.login.LoginActivity
 import java.util.Locale
 import javax.inject.Inject
 
@@ -54,7 +55,7 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
         (application as MyApplication).appComponent.inject(this)
-        mainViewModel = ViewModelProvider(this, viewModelFactory).get(MainViewModel::class.java)
+        mainViewModel = ViewModelProvider(this, viewModelFactory)[MainViewModel::class.java]
 
         val navController = findNavController(R.id.nav_host_fragment_activity_main)
         val navView: BottomNavigationView = binding.navView

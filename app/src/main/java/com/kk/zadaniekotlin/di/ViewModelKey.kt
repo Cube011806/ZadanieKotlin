@@ -1,4 +1,4 @@
-package com.kk.zadaniekotlin
+package com.kk.zadaniekotlin.di
 
 import androidx.lifecycle.ViewModel
 import dagger.MapKey

@@ -1,4 +1,4 @@
-package com.kk.zadaniekotlin
+package com.kk.zadaniekotlin.ui.login
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -41,4 +41,3 @@ sealed class AuthState {
     object Registered : AuthState()
     data class Error(val message: String) : AuthState()
 }
-

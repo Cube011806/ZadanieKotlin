@@ -1,4 +1,4 @@
-package com.kk.zadaniekotlin
+package com.kk.zadaniekotlin.di
 
 import android.app.Application
 import dagger.Module

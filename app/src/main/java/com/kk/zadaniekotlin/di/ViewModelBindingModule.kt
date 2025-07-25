@@ -1,7 +1,10 @@
-package com.kk.zadaniekotlin
+package com.kk.zadaniekotlin.di
 
 import androidx.lifecycle.ViewModel
+import com.kk.zadaniekotlin.MainViewModel
+import com.kk.zadaniekotlin.SharedViewModel
 import com.kk.zadaniekotlin.ui.basket.BasketViewModel
+import com.kk.zadaniekotlin.ui.login.LoginViewModel
 import dagger.Binds
 import dagger.Module
 import dagger.multibindings.IntoMap

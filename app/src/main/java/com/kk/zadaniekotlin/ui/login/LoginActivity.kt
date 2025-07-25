@@ -1,13 +1,18 @@
-package com.kk.zadaniekotlin
+package com.kk.zadaniekotlin.ui.login
 
 import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import android.widget.*
+import android.widget.Button
+import android.widget.EditText
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.textfield.TextInputLayout
+import com.kk.zadaniekotlin.MainActivity
+import com.kk.zadaniekotlin.MyApplication
+import com.kk.zadaniekotlin.R
 import javax.inject.Inject
 
 class LoginActivity : AppCompatActivity() {
@@ -60,19 +65,6 @@ class LoginActivity : AppCompatActivity() {
         }
 
         registerButton.setOnClickListener {
-            /*val email = emailField.text.toString().trim()
-            val password = passwordField.text.toString()
-
-            val isEmailValid = email.isNotEmpty()
-            val isPasswordValid = password.isNotEmpty()
-
-            emailLayout.error = if (!isEmailValid) getString(R.string.login_hintEmail) else null
-            passwordLayout.error = if (!isPasswordValid) getString(R.string.login_hintPassword) else null
-
-            if (isEmailValid && isPasswordValid) {
-                loginViewModel.register(email, password)
-            }*/
-
             val intent = Intent(this, RegisterActivity::class.java)
             startActivity(intent)
 
