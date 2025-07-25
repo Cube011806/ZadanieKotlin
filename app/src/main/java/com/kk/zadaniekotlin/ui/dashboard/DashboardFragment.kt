@@ -1,21 +1,14 @@
 package com.kk.zadaniekotlin.ui.dashboard
-
-import ItemAdapter
 import android.content.Context
 import android.os.Bundle
 import android.view.*
-import android.widget.Toast
 import androidx.fragment.app.*
 import androidx.lifecycle.ViewModelProvider
-import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import com.kk.zadaniekotlin.MyApplication
-import com.kk.zadaniekotlin.R
 import com.kk.zadaniekotlin.SharedViewModel
 import com.kk.zadaniekotlin.databinding.FragmentDashboardBinding
-import com.kk.zadaniekotlin.model.Item
 import com.kk.zadaniekotlin.ui.basket.BasketViewModel
-import com.kk.zadaniekotlin.ui.dashboardimport.*
 import javax.inject.Inject
 
 class DashboardFragment : Fragment() {
@@ -79,7 +72,6 @@ class DashboardFragment : Fragment() {
                     binding.progressBar.visibility = View.GONE
                     binding.recyclerView.visibility = View.VISIBLE
                     binding.emptyTextView.visibility = View.GONE
-                    adapter.updateData(state.items)
                 }
                 is DashboardUiState.Empty -> {
                     binding.progressBar.visibility = View.GONE
@@ -90,9 +82,12 @@ class DashboardFragment : Fragment() {
                     binding.progressBar.visibility = View.GONE
                     binding.recyclerView.visibility = View.VISIBLE
                     binding.emptyTextView.visibility = View.GONE
-                    Toast.makeText(requireContext(), "Błąd: ${state.exception.message}", Toast.LENGTH_SHORT).show()
                 }
             }
+        }
+
+        dashboardViewModel.items.observe(viewLifecycleOwner) {
+            adapter.updateData(it)
         }
     }
 
