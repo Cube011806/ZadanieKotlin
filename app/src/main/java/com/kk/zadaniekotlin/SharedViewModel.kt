@@ -20,4 +20,9 @@ class SharedViewModel @Inject constructor() : ViewModel() {
     fun setSubCatId(id: Int) {
         _subCatId.value = id
     }
+    fun resetCategorySelection() {
+        _catId.value = 0
+        _subCatId.value = 0
+    }
+
 }

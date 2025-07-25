@@ -1,7 +1,5 @@
 package com.kk.zadaniekotlin.ui.basket
 
-import android.content.Context
-import android.content.Intent
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -10,46 +8,38 @@ import com.google.firebase.database.*
 import com.kk.zadaniekotlin.model.Item
 import javax.inject.Inject
 
-class BasketViewModel @Inject constructor(): ViewModel() {
+class BasketViewModel @Inject constructor() : ViewModel() {
 
     private val _cartItems = MutableLiveData<List<Item>>(emptyList())
     val cartItems: LiveData<List<Item>> get() = _cartItems
 
-    private val _cartSum = MutableLiveData<Double>(0.0)
+    private val _cartSum = MutableLiveData(0.0)
     val cartSum: LiveData<Double> get() = _cartSum
 
     private val _uiState = MutableLiveData<BasketUiState>()
     val uiState: LiveData<BasketUiState> get() = _uiState
 
-    fun notifyItemAdded(context: Context, item: Item) {
-        val intent = Intent("com.kk.zadaniekotlin.ACTION_ITEM_ADDED").apply {
-            putExtra("itemName", item.title)
-        }
-        context.sendBroadcast(intent)
+    fun addItem(item: Item) {
+        updateCart { items -> items + item }
     }
-
-    fun addItem(item: Item, context: Context) {
-        val updated = _cartItems.value?.toMutableList() ?: mutableListOf()
-        updated.add(item)
-        _cartItems.value = updated
-        _cartSum.value = updated.sumOf { it.price ?: 0.0 }
-        saveCartToFirebase()
-    }
-
 
     fun removeItem(item: Item) {
-        val updated = _cartItems.value?.toMutableList() ?: mutableListOf()
-        updated.remove(item)
-        _cartItems.value = updated
-        _cartSum.value = updated.sumOf { it.price ?: 0.0 }
-        saveCartToFirebase()
+        updateCart { items -> items - item }
     }
 
-    fun saveCartToFirebase() {
+    private fun updateCart(modifier: (List<Item>) -> List<Item>) {
+        val updated = modifier(_cartItems.value ?: emptyList())
+        _cartItems.value = updated
+        _cartSum.value = updated.sumOf { it.price }
+        saveCartToFirebase(updated)
+    }
+
+    fun saveCartToFirebase(cart: List<Item> = _cartItems.value ?: emptyList()) {
         val userId = FirebaseAuth.getInstance().currentUser?.uid ?: return
-        val cartItems = _cartItems.value ?: return
-        val ref = FirebaseDatabase.getInstance().getReference("carts").child(userId)
-        ref.setValue(cartItems)
+        FirebaseDatabase.getInstance()
+            .getReference("carts")
+            .child(userId)
+            .setValue(cart)
     }
 
     fun loadCartFromFirebase() {
@@ -62,7 +52,7 @@ class BasketViewModel @Inject constructor(): ViewModel() {
             override fun onDataChange(snapshot: DataSnapshot) {
                 val loadedItems = snapshot.children.mapNotNull { it.getValue(Item::class.java) }
                 _cartItems.value = loadedItems
-                _cartSum.value = loadedItems.sumOf { it.price ?: 0.0 }
+                _cartSum.value = loadedItems.sumOf { it.price }
 
                 _uiState.value = if (loadedItems.isEmpty()) {
                     BasketUiState.Empty
@@ -77,6 +67,7 @@ class BasketViewModel @Inject constructor(): ViewModel() {
         })
     }
 }
+
 sealed class BasketUiState {
     data object Loading : BasketUiState()
     data class Success(val basket: List<Item>) : BasketUiState()

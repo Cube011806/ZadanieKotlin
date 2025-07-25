@@ -29,8 +29,6 @@ class CategoryFragment : Fragment() {
     private val viewModel: CategoryViewModel by viewModels {
         CategoryViewModelFactory()
     }
-
-
     private val sharedViewModel: SharedViewModel by activityViewModels {
         viewModelFactory
     }
@@ -54,6 +52,7 @@ class CategoryFragment : Fragment() {
         val initialName = viewModel.categoryIdToName[initialId] ?: "Wszystkie"
 
         sharedViewModel.setCatId(initialId)
+
 
         if (initialId == 0) {
             sharedViewModel.setSubCatId(0)
@@ -118,7 +117,6 @@ class CategoryFragment : Fragment() {
                 .setNegativeButton(getString(R.string.filter_cancel), null)
                 .show()
         }
-
         return binding.root
     }
 

@@ -51,7 +51,7 @@ class DashboardFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         adapter = ItemAdapter(mutableListOf(), basketViewModel) { item ->
-            basketViewModel.addItem(item, requireContext())
+            basketViewModel.addItem(item)
         }
 
         binding.recyclerView.layoutManager = GridLayoutManager(requireContext(), 2)

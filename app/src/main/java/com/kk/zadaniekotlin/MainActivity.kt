@@ -33,6 +33,9 @@ class MainActivity : AppCompatActivity() {
 
     lateinit var mainViewModel: MainViewModel
     private val basketViewModel: BasketViewModel by viewModels()
+    private val sharedViewModel: SharedViewModel by viewModels {
+        viewModelFactory
+    }
 
     private val loginLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
@@ -109,6 +112,7 @@ class MainActivity : AppCompatActivity() {
         navView.setOnItemSelectedListener { item ->
             when (item.itemId) {
                 R.id.navigation_dashboard -> {
+                    sharedViewModel.resetCategorySelection()
                     navController.navigate(item.itemId)
                     true
                 }
