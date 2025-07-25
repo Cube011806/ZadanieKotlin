@@ -31,7 +31,8 @@
     <string name="login_password">Hasło</string>
     <string name="login_hintEmail">Email wymagany</string>
     <string name="login_hintPassword">Hasło wymagane</string>
-    <string name="title_activity_register">RegisterActivity</string>
+    <string name="title_activity_register" translatable="false">RegisterActivity</string>
     <string name="register_message">Zarejestruj się</string>
     <string name="confirm_password">Potwierdź hasło</string>
+    <string name="email">Email</string>
 </resources>

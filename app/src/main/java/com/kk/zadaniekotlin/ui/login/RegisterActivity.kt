@@ -8,11 +8,10 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.textfield.TextInputLayout
-import com.kk.zadaniekotlin.MainActivity
 import com.kk.zadaniekotlin.MyApplication
 import com.kk.zadaniekotlin.R
 import javax.inject.Inject
-class LoginActivity : AppCompatActivity() {
+class RegisterActivity : AppCompatActivity() {
 
     @Inject
     lateinit var viewModelFactory: ViewModelProvider.Factory
@@ -22,40 +21,38 @@ class LoginActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         (application as MyApplication).appComponent.inject(this)
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_login)
+        setContentView(R.layout.activity_register)
 
         loginViewModel = ViewModelProvider(this, viewModelFactory)[LoginViewModel::class.java]
 
-        val emailLayout = findViewById<TextInputLayout>(R.id.emailInputLayout)
+        val emailLayout = findViewById<TextInputLayout>(R.id.registerEmailLayout)
         val passwordLayout = findViewById<TextInputLayout>(R.id.passwordInputLayout)
-        val emailField = findViewById<EditText>(R.id.loginEmail)
-        val passwordField = findViewById<EditText>(R.id.loginPassword)
-        val loginButton = findViewById<Button>(R.id.loginButton)
+        val confirmLayout = findViewById<TextInputLayout>(R.id.passwordConfirmLayout)
+
+        val emailField = findViewById<EditText>(R.id.registerEmail)
+        val passwordField = findViewById<EditText>(R.id.registerPassword)
+        val confirmPasswordField = findViewById<EditText>(R.id.confirmPassword)
+
         val registerButton = findViewById<Button>(R.id.registerButton)
         val backButton = findViewById<Button>(R.id.backButton)
 
-        loginButton.setOnClickListener {
+        registerButton.setOnClickListener {
             val email = emailField.text.toString().trim()
             val password = passwordField.text.toString()
-            loginViewModel.onLoginFormSubmitted(email, password)
-        }
-
-        registerButton.setOnClickListener {
-            startActivity(Intent(this, RegisterActivity::class.java))
+            val confirmPassword = confirmPasswordField.text.toString()
+            loginViewModel.onRegisterFormSubmitted(email, password, confirmPassword)
         }
 
         backButton.setOnClickListener {
-            onBackPressedDispatcher.onBackPressed()
+            finish()
         }
 
         loginViewModel.authState.observe(this) { state ->
             when (state) {
-                is AuthState.Loading -> {  }
-                is AuthState.LoggedIn -> {
-                    Toast.makeText(this, "Zalogowano pomyślnie!", Toast.LENGTH_SHORT).show()
-                    startActivity(Intent(this, MainActivity::class.java).apply {
-                        flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-                    })
+                is AuthState.Registered -> {
+                    Toast.makeText(this, "Zarejestrowano pomyślnie!", Toast.LENGTH_SHORT).show()
+                    startActivity(Intent(this, LoginActivity::class.java))
+                    finish()
                 }
                 is AuthState.Error -> {
                     Toast.makeText(this, "Błąd: ${state.message}", Toast.LENGTH_SHORT).show()
@@ -67,6 +64,7 @@ class LoginActivity : AppCompatActivity() {
         loginViewModel.formErrors.observe(this) { errors ->
             emailLayout.error = errors.emailError
             passwordLayout.error = errors.passwordError
+            confirmLayout.error = errors.confirmPasswordError
         }
     }
 }
