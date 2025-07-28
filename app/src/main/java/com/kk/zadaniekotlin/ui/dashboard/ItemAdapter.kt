@@ -57,14 +57,22 @@ class ItemAdapter(
         )
 
         holder.addButton.setOnClickListener {
-            onAddToCart(item)
-            holder.addButton.setImageResource(R.drawable.shopping_cart)
+            val isInCartNow = viewModel.cartItems.value?.contains(item) == true
 
-            ContextCompat.startForegroundService(
-                context,
-                Intent(context, NotificationService::class.java)
-            )
+            if (isInCartNow) {
+                viewModel.removeItem(item)
+                holder.addButton.setImageResource(R.drawable.add_shopping_cart_24)
+            } else {
+                onAddToCart(item)
+                holder.addButton.setImageResource(R.drawable.shopping_cart)
+
+                ContextCompat.startForegroundService(
+                    context,
+                    Intent(context, NotificationService::class.java)
+                )
+            }
         }
+
     }
 
     override fun getItemCount(): Int = items.size

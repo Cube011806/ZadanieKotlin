@@ -13,12 +13,14 @@ import com.kk.zadaniekotlin.R
 import com.kk.zadaniekotlin.SharedViewModel
 import com.kk.zadaniekotlin.model.Category
 import androidx.navigation.findNavController
+import android.util.Log
 
 class CategoryAdapter(
     private val sharedViewModel: SharedViewModel
 ) : RecyclerView.Adapter<CategoryAdapter.CategoryViewHolder>() {
 
     private val categories = mutableListOf<Category>()
+    private var navigationStarted = false
 
     inner class CategoryViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val image: ImageView = view.findViewById(R.id.itemImage)
@@ -42,10 +44,20 @@ class CategoryAdapter(
             .into(holder.image)
 
         holder.itemView.setOnClickListener {
-            sharedViewModel.setSubCatId(category.subCatId)
-            val action = CategoryFragmentDirections
-                .actionCategoryFragmentToDashboardFragment()
-            holder.itemView.findNavController().navigate(action)
+            if (navigationStarted) return@setOnClickListener
+
+            val navController = holder.itemView.findNavController()
+            val currentDest = navController.currentDestination?.id
+
+            if (currentDest == R.id.navigation_category) {
+                navigationStarted = true
+                sharedViewModel.setSubCatId(category.subCatId)
+                try {
+                    navController.navigate(R.id.navigation_dashboard)
+                } catch (e: Exception) {
+                    Log.e("CategoryAdapter", "Navigation error: ${e.message}", e)
+                }
+            }
         }
     }
 
@@ -54,6 +66,7 @@ class CategoryAdapter(
     fun updateData(newCategories: List<Category>) {
         categories.clear()
         categories.addAll(newCategories)
+        navigationStarted = false
         notifyDataSetChanged()
     }
 }

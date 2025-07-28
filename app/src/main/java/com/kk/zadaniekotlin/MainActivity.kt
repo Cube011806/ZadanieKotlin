@@ -72,6 +72,16 @@ class MainActivity : AppCompatActivity() {
         invalidateOptionsMenu()
     }
 
+    override fun onBackPressed() {
+        val navController = findNavController(R.id.nav_host_fragment_activity_main)
+        val currentDestination = navController.currentDestination?.id
+        if (currentDestination != R.id.navigation_home) {
+            navController.navigate(R.id.navigation_home)
+        } else {
+            finish()
+        }
+    }
+
     private fun setupActionBar(navController: androidx.navigation.NavController) {
         setSupportActionBar(findViewById(R.id.topBar))
         val appBarConfiguration = AppBarConfiguration(setOf(R.id.navigation_home))

@@ -3,6 +3,7 @@ package com.kk.zadaniekotlin.ui.home
 import android.content.Context
 import android.graphics.Color
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -19,7 +20,6 @@ import com.kk.zadaniekotlin.SharedViewModel
 import com.kk.zadaniekotlin.databinding.FragmentHomeBinding
 import javax.inject.Inject
 import androidx.core.graphics.drawable.toDrawable
-
 class HomeFragment : Fragment() {
 
     private var _binding: FragmentHomeBinding? = null
@@ -30,6 +30,8 @@ class HomeFragment : Fragment() {
 
     private val homeViewModel: HomeViewModel by viewModels()
     private val sharedViewModel: SharedViewModel by activityViewModels { viewModelFactory }
+
+    private var navigationStarted = false
 
     override fun onAttach(context: Context) {
         (requireActivity().application as MyApplication).appComponent.inject(this)
@@ -51,12 +53,11 @@ class HomeFragment : Fragment() {
         homeViewModel.uiState.observe(viewLifecycleOwner) { state ->
             binding.progressBar.visibility = if (state is HomeUiState.Loading) View.VISIBLE else View.GONE
             when (state) {
-                is HomeUiState.Loading -> {binding.progressBar.visibility = View.VISIBLE}
+                is HomeUiState.Loading -> binding.progressBar.visibility = View.VISIBLE
                 is HomeUiState.Success -> loadCategoryImages(state.categoryImages)
                 is HomeUiState.Empty -> Toast.makeText(requireContext(), "Brak obrazów do wyświetlenia", Toast.LENGTH_SHORT).show()
                 is HomeUiState.Error -> Toast.makeText(requireContext(), "Błąd: ${state.message}", Toast.LENGTH_SHORT).show()
             }
-
         }
     }
 
@@ -77,10 +78,18 @@ class HomeFragment : Fragment() {
                 .into(button)
 
             button.setOnClickListener {
-                homeViewModel.onCategoryClicked(category.id)
-                sharedViewModel.setCatId(category.id)
-                val action = HomeFragmentDirections.actionNavigationHomeToNavigationCategory(category.id)
-                findNavController().navigate(action)
+                if (navigationStarted) return@setOnClickListener
+
+                try {
+                    navigationStarted = true
+                    homeViewModel.onCategoryClicked(category.id)
+                    sharedViewModel.setCatId(category.id)
+                    val action = HomeFragmentDirections.actionNavigationHomeToNavigationCategory(category.id)
+                    findNavController().navigate(action)
+                } catch (e: Exception) {
+                    Toast.makeText(requireContext(), "Nawigacja nie powiodła się", Toast.LENGTH_SHORT).show()
+                    Log.e("HomeFragment", "Błąd nawigacji: ${e.message}", e)
+                }
             }
         }
     }
@@ -88,5 +97,7 @@ class HomeFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+        navigationStarted = false
     }
 }
+

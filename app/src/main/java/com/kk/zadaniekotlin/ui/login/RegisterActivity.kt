@@ -2,6 +2,8 @@ package com.kk.zadaniekotlin.ui.login
 
 import android.content.Intent
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
@@ -11,6 +13,7 @@ import com.google.android.material.textfield.TextInputLayout
 import com.kk.zadaniekotlin.MyApplication
 import com.kk.zadaniekotlin.R
 import javax.inject.Inject
+
 class RegisterActivity : AppCompatActivity() {
 
     @Inject
@@ -47,6 +50,33 @@ class RegisterActivity : AppCompatActivity() {
             finish()
         }
 
+        emailField.addTextChangedListener(object : TextWatcher {
+            override fun afterTextChanged(s: Editable?) {
+                emailLayout.error = null
+                loginViewModel.onEmailChanged(s.toString())
+            }
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+        })
+
+        passwordField.addTextChangedListener(object : TextWatcher {
+            override fun afterTextChanged(s: Editable?) {
+                passwordLayout.error = null
+                loginViewModel.onPasswordChanged(s.toString())
+            }
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+        })
+
+        confirmPasswordField.addTextChangedListener(object : TextWatcher {
+            override fun afterTextChanged(s: Editable?) {
+                confirmLayout.error = null
+                loginViewModel.onConfirmPasswordChanged(s.toString())
+            }
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+        })
+
         loginViewModel.authState.observe(this) { state ->
             when (state) {
                 is AuthState.Registered -> {
@@ -62,9 +92,9 @@ class RegisterActivity : AppCompatActivity() {
         }
 
         loginViewModel.formErrors.observe(this) { errors ->
-            emailLayout.error = errors.emailError
-            passwordLayout.error = errors.passwordError
-            confirmLayout.error = errors.confirmPasswordError
+            emailLayout.error = errors?.emailError
+            passwordLayout.error = errors?.passwordError
+            confirmLayout.error = errors?.confirmPasswordError
         }
     }
 }

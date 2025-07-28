@@ -34,6 +34,7 @@ class CategoryFragment : Fragment() {
     }
 
     private lateinit var adapter: CategoryAdapter
+    private var navigationStarted = false
 
     override fun onAttach(context: Context) {
         (requireActivity().application as MyApplication).appComponent.inject(this)
@@ -47,16 +48,23 @@ class CategoryFragment : Fragment() {
         binding.recyclerView2.layoutManager = GridLayoutManager(requireContext(), 3)
         binding.recyclerView2.adapter = adapter
 
-        val args = CategoryFragmentArgs.fromBundle(requireArguments())
-        val initialId = args.categoryId
+        val args = requireArguments()
+        val initialId = args.getInt("categoryId", 0)
         val initialName = viewModel.categoryIdToName[initialId] ?: "Wszystkie"
 
         sharedViewModel.setCatId(initialId)
 
-
-        if (initialId == 0) {
-            sharedViewModel.setSubCatId(0)
-            findNavController().navigate(R.id.navigation_dashboard)
+        if (initialId == 0 && !navigationStarted) {
+            val currentDest = findNavController().currentDestination?.id
+            if (currentDest == R.id.navigation_category) {
+                navigationStarted = true
+                sharedViewModel.setSubCatId(0)
+                try {
+                    findNavController().navigate(R.id.navigation_dashboard)
+                } catch (e: Exception) {
+                    Toast.makeText(requireContext(), "Błąd nawigacji", Toast.LENGTH_SHORT).show()
+                }
+            }
         } else {
             if (viewModel.getCurrentCategoryName() == null) {
                 viewModel.setCurrentCategory(initialId, initialName)
@@ -95,7 +103,15 @@ class CategoryFragment : Fragment() {
 
         viewModel.navigateToDashboard.observe(viewLifecycleOwner, Observer { navigate ->
             navigate?.let {
-                if (it) findNavController().navigate(R.id.navigation_dashboard)
+                val currentDest = findNavController().currentDestination?.id
+                if (it && !navigationStarted && currentDest == R.id.navigation_category) {
+                    navigationStarted = true
+                    try {
+                        findNavController().navigate(R.id.navigation_dashboard)
+                    } catch (e: Exception) {
+                        Toast.makeText(requireContext(), "Błąd nawigacji", Toast.LENGTH_SHORT).show()
+                    }
+                }
                 viewModel.resetNavigationFlag()
             }
         })
@@ -117,11 +133,13 @@ class CategoryFragment : Fragment() {
                 .setNegativeButton(getString(R.string.filter_cancel), null)
                 .show()
         }
+
         return binding.root
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+        navigationStarted = false
     }
 }

@@ -2,6 +2,7 @@ package com.kk.zadaniekotlin.ui.basket
 
 import android.content.Context
 import android.os.Bundle
+import android.os.Parcelable
 import android.view.*
 import androidx.fragment.app.*
 import androidx.lifecycle.ViewModelProvider
@@ -24,12 +25,18 @@ class BasketFragment : Fragment() {
 
     private lateinit var adapter: BasketItemAdapter
 
+    private var listState: Parcelable? = null
+
     override fun onAttach(context: Context) {
         (requireActivity().application as MyApplication).appComponent.inject(this)
         super.onAttach(context)
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
         _binding = FragmentBasketBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -44,7 +51,6 @@ class BasketFragment : Fragment() {
 
         setupRecyclerView()
         observeViewModel()
-
         basketViewModel.loadCartFromFirebase()
     }
 
@@ -60,6 +66,12 @@ class BasketFragment : Fragment() {
     private fun observeViewModel() {
         basketViewModel.cartItems.observe(viewLifecycleOwner) { items ->
             adapter.submitList(items)
+
+            if (listState != null) {
+                binding.recyclerView.layoutManager?.onRestoreInstanceState(listState)
+                listState = null
+            }
+
             binding.emptyTextView.visibility = if (items.isEmpty()) View.VISIBLE else View.GONE
             binding.recyclerView.visibility = if (items.isNotEmpty()) View.VISIBLE else View.GONE
         }
@@ -83,6 +95,11 @@ class BasketFragment : Fragment() {
             button2.visibility = View.GONE
             sumView.visibility = View.GONE
         }
+    }
+
+    override fun onPause() {
+        super.onPause()
+        listState = binding.recyclerView.layoutManager?.onSaveInstanceState()
     }
 
     override fun onDestroyView() {

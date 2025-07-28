@@ -61,6 +61,18 @@ class LoginViewModel @Inject constructor() : ViewModel() {
                 _authState.value = AuthState.Error(it.message ?: "Błąd rejestracji")
             }
     }
+
+    fun onEmailChanged(email: String) {
+        _formErrors.value = _formErrors.value?.copy(emailError = null)
+    }
+
+    fun onPasswordChanged(password: String) {
+        _formErrors.value = _formErrors.value?.copy(passwordError = null)
+    }
+
+    fun onConfirmPasswordChanged(confirmPassword: String) {
+        _formErrors.value = _formErrors.value?.copy(confirmPasswordError = null)
+    }
 }
 
 sealed class AuthState {

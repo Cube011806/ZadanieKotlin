@@ -2,6 +2,8 @@ package com.kk.zadaniekotlin.ui.login
 
 import android.content.Intent
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
@@ -12,6 +14,7 @@ import com.kk.zadaniekotlin.MainActivity
 import com.kk.zadaniekotlin.MyApplication
 import com.kk.zadaniekotlin.R
 import javax.inject.Inject
+
 class LoginActivity : AppCompatActivity() {
 
     @Inject
@@ -48,9 +51,27 @@ class LoginActivity : AppCompatActivity() {
             onBackPressedDispatcher.onBackPressed()
         }
 
+        emailField.addTextChangedListener(object : TextWatcher {
+            override fun afterTextChanged(s: Editable?) {
+                emailLayout.error = null
+                loginViewModel.onEmailChanged(s.toString())
+            }
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+        })
+
+        passwordField.addTextChangedListener(object : TextWatcher {
+            override fun afterTextChanged(s: Editable?) {
+                passwordLayout.error = null
+                loginViewModel.onPasswordChanged(s.toString())
+            }
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+        })
+
         loginViewModel.authState.observe(this) { state ->
             when (state) {
-                is AuthState.Loading -> {  }
+                is AuthState.Loading -> { }
                 is AuthState.LoggedIn -> {
                     Toast.makeText(this, "Zalogowano pomyślnie!", Toast.LENGTH_SHORT).show()
                     startActivity(Intent(this, MainActivity::class.java).apply {
@@ -65,8 +86,8 @@ class LoginActivity : AppCompatActivity() {
         }
 
         loginViewModel.formErrors.observe(this) { errors ->
-            emailLayout.error = errors.emailError
-            passwordLayout.error = errors.passwordError
+            emailLayout.error = errors?.emailError
+            passwordLayout.error = errors?.passwordError
         }
     }
 }
