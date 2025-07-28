@@ -17,6 +17,13 @@ class SharedViewModel @Inject constructor() : ViewModel() {
         _catId.value = id
     }
 
+    private val _currency = MutableLiveData("zł")
+    val currency: LiveData<String> get() = _currency
+
+    fun setCurrency(currency: String) {
+        _currency.value = currency
+    }
+
     fun setSubCatId(id: Int) {
         _subCatId.value = id
     }

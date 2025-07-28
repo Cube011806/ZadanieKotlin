@@ -1,5 +1,6 @@
 package com.kk.zadaniekotlin
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
@@ -72,6 +73,7 @@ class MainActivity : AppCompatActivity() {
         invalidateOptionsMenu()
     }
 
+    @SuppressLint("MissingSuperCall")
     override fun onBackPressed() {
         val navController = findNavController(R.id.nav_host_fragment_activity_main)
         val currentDestination = navController.currentDestination?.id
@@ -201,7 +203,21 @@ class MainActivity : AppCompatActivity() {
                         .show()
                     true
                 }
-
+                R.id.menu_change_currency -> {
+                    val currencies = resources.getStringArray(R.array.currency_options)
+                    AlertDialog.Builder(this)
+                        .setTitle("Wybierz walutę")
+                        .setItems(currencies) { _, which ->
+                            val selected = currencies[which]
+                            when (selected) {
+                                "Złoty" -> setAppCurrency("zł")
+                                "Euro" -> setAppCurrency("euro")
+                            }
+                        }
+                        .setNegativeButton("Anuluj", null)
+                        .show()
+                    true
+                }
                 R.id.menu_logout -> {
                     mainViewModel.logout()
                     val badge = binding.navView.getBadge(R.id.navigation_basket)
@@ -225,6 +241,13 @@ class MainActivity : AppCompatActivity() {
     override fun onSupportNavigateUp(): Boolean {
         val navController = findNavController(R.id.nav_host_fragment_activity_main)
         return navController.navigateUp() || super.onSupportNavigateUp()
+    }
+    private var currentCurrency = "zł"
+
+    private fun setAppCurrency(currency: String) {
+        currentCurrency = currency
+        sharedViewModel.setCurrency(currency)
+        recreate()
     }
 
     private fun setAppLocale(language: String) {

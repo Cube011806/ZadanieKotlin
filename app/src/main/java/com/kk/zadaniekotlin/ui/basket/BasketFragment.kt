@@ -24,7 +24,6 @@ class BasketFragment : Fragment() {
     private val basketViewModel: BasketViewModel by activityViewModels { viewModelFactory }
 
     private lateinit var adapter: BasketItemAdapter
-
     private var listState: Parcelable? = null
 
     override fun onAttach(context: Context) {
@@ -51,6 +50,7 @@ class BasketFragment : Fragment() {
 
         setupRecyclerView()
         observeViewModel()
+        setupSwipeRefresh()
         basketViewModel.loadCartFromFirebase()
     }
 
@@ -82,6 +82,13 @@ class BasketFragment : Fragment() {
 
         basketViewModel.uiState.observe(viewLifecycleOwner) { state ->
             binding.progressBar.visibility = if (state is BasketUiState.Loading) View.VISIBLE else View.GONE
+            binding.swipeRefreshLayout.isRefreshing = state is BasketUiState.Loading
+        }
+    }
+
+    private fun setupSwipeRefresh() {
+        binding.swipeRefreshLayout.setOnRefreshListener {
+            basketViewModel.loadCartFromFirebase()
         }
     }
 
@@ -94,6 +101,7 @@ class BasketFragment : Fragment() {
             progressBar.visibility = View.GONE
             button2.visibility = View.GONE
             sumView.visibility = View.GONE
+            swipeRefreshLayout.isEnabled = false
         }
     }
 
