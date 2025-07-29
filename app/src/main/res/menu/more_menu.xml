@@ -4,6 +4,10 @@
         android:title="@string/more_language"
         android:icon="@drawable/arrow_back_24px" />
     <item
+        android:id="@+id/menu_compose_activity"
+        android:title="Compose Activity"
+        android:icon="@drawable/arrow_back_24px" />
+    <item
         android:id="@+id/menu_change_currency"
         android:title="@string/more_currency"
         android:icon="@drawable/ic_dashboard_black_24dp" />

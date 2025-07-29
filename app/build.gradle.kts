@@ -5,6 +5,7 @@ plugins {
     id("com.google.gms.google-services")
     kotlin("kapt")
 }
+
 android {
     namespace = "com.kk.zadaniekotlin"
     compileSdk = 35
@@ -84,5 +85,21 @@ dependencies {
     implementation("com.google.android.material:material:1.9.0")
     implementation("com.google.dagger:dagger:$daggerVersion")
     kapt("com.google.dagger:dagger-compiler:$daggerVersion")
+    val composeBom = platform("androidx.compose:compose-bom:2025.05.00")
+    implementation(composeBom)
+    androidTestImplementation(composeBom)
+
+    // UI
+    implementation("androidx.compose.ui:ui")
+    implementation("androidx.compose.ui:ui-tooling-preview")
+    debugImplementation("androidx.compose.ui:ui-tooling")
+    implementation("androidx.compose.runtime:runtime-livedata:1.6.0")
+
+    // Material Design
+    implementation("androidx.compose.material3:material3")
+
+    // Activity i ViewModel
+    implementation("androidx.activity:activity-compose:1.10.1")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.8.5")
 }
 apply(plugin = "com.google.gms.google-services")

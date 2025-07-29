@@ -23,6 +23,7 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.firebase.FirebaseApp
 import com.kk.zadaniekotlin.databinding.ActivityMainBinding
 import com.kk.zadaniekotlin.ui.basket.BasketViewModel
+import com.kk.zadaniekotlin.ui.compose.ComposeActivity
 import com.kk.zadaniekotlin.ui.login.LoginActivity
 import java.util.Locale
 import javax.inject.Inject
@@ -201,6 +202,11 @@ class MainActivity : AppCompatActivity() {
                         }
                         .setNegativeButton("Anuluj", null)
                         .show()
+                    true
+                }
+                R.id.menu_compose_activity -> {
+                    val intent = Intent(this, ComposeActivity::class.java)
+                    startActivity(intent)
                     true
                 }
                 R.id.menu_change_currency -> {
